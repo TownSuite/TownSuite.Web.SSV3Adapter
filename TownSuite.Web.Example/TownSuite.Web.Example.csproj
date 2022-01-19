@@ -9,16 +9,24 @@
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="prometheus-net.AspNetCore" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TownSuite.Web.SSV3Facade\TownSuite.Web.SSV3Facade.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\TownSuite.Web.SSV3Facade.Prometheus\TownSuite.Web.SSV3Facade.Prometheus.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\TownSuite.Web.SSV3Facade.Interfaces\TownSuite.Web.SSV3Facade.Interfaces.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Remove="ServiceStackExample\" />
     <None Remove="Newtonsoft.Json" />
+    <None Remove="prometheus-net.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ServiceStackExample\" />

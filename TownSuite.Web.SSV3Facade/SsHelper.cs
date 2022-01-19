@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
+using TownSuite.Web.SSV3Facade.Interfaces;
 
 namespace TownSuite.Web.SSV3Facade
 {

@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-
+using TownSuite.Web.SSV3Facade.Interfaces;
 
 [assembly: InternalsVisibleTo("TownSuite.Web.Tests")]
 namespace TownSuite.Web.SSV3Facade
@@ -28,16 +28,22 @@ namespace TownSuite.Web.SSV3Facade
         private readonly ServiceStackV3FacadeOptions _options;
         private readonly IServiceProvider _serviceProvider;
         private readonly SsHelper _ssHelper;
+        readonly ISSV3Promethues? _prom;
 
         public ServiceStackFacade(ServiceStackV3FacadeOptions options,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            ISSV3Promethues? prom = null)
         {
             _options = options;
             _serviceProvider = serviceProvider;
             _ssHelper = new SsHelper(options, serviceProvider);
+            _prom = prom;
         }
 
-        public async Task<(int statusCode, string? json)> Post(string path, string value)
+        public async Task<(int statusCode, string? json)> Post(
+            string path,
+            string value,
+            string method)
         {
 
             // TODO: make sure when calling have the front end code include the full namespace of the dto
@@ -57,18 +63,24 @@ namespace TownSuite.Web.SSV3Facade
 
             if (!serviceInfo.HasValue)
             {
+                _prom.ExceptionTriggered();
                 return (404, "Service Not found");
             }
 
             if (serviceInfo.Value.Method == null || serviceInfo.HasValue == false)
             {
+                _prom.ExceptionTriggered();
                 return (404, "Method not found");
             }
 
             object? request = JsonConvert.DeserializeObject(value ?? "", serviceInfo.Value.DtoType,
                 _options.SerializerSettings);
 
-            return await CreateAndInvokeService(serviceInfo, request);
+            var results= await CreateAndInvokeService(serviceInfo, request);
+            _prom?.EndRequest(results.statusCode.ToString(),
+                            method,
+                            name, serviceInfo.Value.Method.Name);
+            return results;
 
         }
 

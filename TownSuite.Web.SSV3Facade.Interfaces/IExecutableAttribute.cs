@@ -1,7 +1,6 @@
 ﻿using System;
-using Microsoft.AspNetCore.Http;
 
-namespace TownSuite.Web.SSV3Facade
+namespace TownSuite.Web.SSV3Facade.Interfaces
 {
     public interface IExecutableAttribute
     {

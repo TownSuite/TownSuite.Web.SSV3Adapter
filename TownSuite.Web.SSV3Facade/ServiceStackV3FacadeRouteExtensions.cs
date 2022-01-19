@@ -32,8 +32,11 @@ namespace TownSuite.Web.SSV3Facade
             // use middlewares to configure a route
             builder.MapMiddlewarePost(options.RoutePath, appBuilder =>
             {
+
                 appBuilder.Run(async context =>
                 {
+                    using var prom = options?.Promethues();
+
                     string path = context.Request.Path;
 
                     string value;
@@ -42,15 +45,19 @@ namespace TownSuite.Web.SSV3Facade
                         value = await reader.ReadToEndAsync();
                     }
 
+                    string method = context.Request.Method;
+
                     var facade = new ServiceStackFacade(options,
-                        builder.ServiceProvider);
-                    var results = await facade.Post(path, value);
+                            builder.ServiceProvider,
+                            prom);
+                    var results = await facade.Post(path, value, method);
 
                     context.Response.StatusCode = results.statusCode;
                     context.Response.ContentType = "application/json";
                     await context.Response.WriteAsync(results.json ?? "");
 
                 });
+
             });
 
             applicationBuilder.UseRouter(builder.Build());
@@ -60,7 +67,7 @@ namespace TownSuite.Web.SSV3Facade
         public static void UseServiceStackV3FacadeSwagger(
           this IApplicationBuilder applicationBuilder,
           ServiceStackV3FacadeOptions options, string description = "Description",
-          string title = "Title", string version="1.2.3.4")
+          string title = "Title", string version = "1.2.3.4")
         {
             var builder = new RouteBuilder(applicationBuilder);
 

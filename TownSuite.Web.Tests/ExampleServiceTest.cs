@@ -19,7 +19,7 @@ public class ExampleServiceTest
    
 
         var facade = new ServiceStackFacade(options, serviceProvider);
-        var results = await facade.Post(path, value);
+        var results = await facade.Post(path, value, "any");
 
         Assert.That(results.json, Is.EqualTo("{\"FirstName\":\"Hello\",\"LastName\":\"World\"}"));
         Assert.That(results.statusCode == 200);

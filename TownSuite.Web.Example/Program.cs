@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Prometheus;
 using TownSuite.Web.SSV3Facade;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,9 +29,16 @@ app.UseHttpsRedirection();
 //REQUIRED
 app.UseRouting();
 
-
-
 app.UseAuthorization();
+
+
+app.UseEndpoints(endpoints =>
+{
+    // ...
+
+    endpoints.MapMetrics();
+});
+
 // If a service has an attribute that implements TownSuite.Web.SSV3Facade.IExecutableAttribute
 // its ExecuteAsync method will invoked.  This is to help port over
 // old code.  Create an attribute that also implmentats IExecutableAttribute.
@@ -41,6 +49,7 @@ app.UseAuthorization();
 // of the service are invoked.
 //
 
+TownSuite.Web.SSV3Facade.Prometheus.SsPromethues.Initialize("");
 
 // REQUIRED
 app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
@@ -94,6 +103,10 @@ app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
             (Output: "Demonstratate a custom result can be returned.",
             ReThrow: true));
     },
+    Promethues = () => 
+    {
+        return new TownSuite.Web.SSV3Facade.Prometheus.SsPromethues();
+    }
 
 });
 
