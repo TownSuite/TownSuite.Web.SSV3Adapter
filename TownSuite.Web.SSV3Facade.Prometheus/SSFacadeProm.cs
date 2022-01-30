@@ -60,9 +60,6 @@ namespace TownSuite.Web.SSV3Facade.Prometheus
 
         public void EndRequest(string code, string method, string controller, string action)
         {
-            _httpRequestsInProgress.Dec();
-
-
             if (timer != null)
             {
                 timer.Stop();
@@ -77,6 +74,7 @@ namespace TownSuite.Web.SSV3Facade.Prometheus
 
         public void Dispose()
         {
+            _httpRequestsInProgress.Dec();
             timer?.Stop();
         }
     }

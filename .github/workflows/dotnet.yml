@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore TownSuite.Web.SSV3Facade.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build TownSuite.Web.SSV3Facade.sln --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test TownSuite.Web.SSV3Facade.sln --no-build --verbosity normal

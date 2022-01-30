@@ -47,7 +47,7 @@ namespace TownSuite.Web.SSV3Facade
         {
             foreach (var param in ctor.GetParameters())
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var parameter = scope.ServiceProvider.GetService(param.ParameterType);
                     if (parameter == null)

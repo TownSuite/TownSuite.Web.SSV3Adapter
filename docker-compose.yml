@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  townsuite.web.example:
+    image: ${DOCKER_REGISTRY-}townsuiteweb
+    build:
+      context: .
+      dockerfile: TownSuite.Web.Example/Dockerfile
+    ports:
+        - "32080:80"
+  sql_service:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    ports:  
+        - "31033:1433"
+    environment:
+        SA_PASSWORD: "ThePassword321&"
+        ACCEPT_EULA: "Y"
+  sql_tools:
+    image: "mcr.microsoft.com/mssql-tools"
+    depends_on:
+        - sql_service
+    command: >
+        sh -c "sleep 25s &&
+        /opt/mssql-tools/bin/sqlcmd -U SA -P \"ThePassword321&\" -S sql_service -d master -Q \"CREATE DATABASE test_data;\" &&
+        /opt/mssql-tools/bin/sqlcmd -U SA -P \"ThePassword321&\" -S sql_service -d test_data -Q \"CREATE TABLE test_table (test_column int, test_column2 varchar(255));\" &&
+        /opt/mssql-tools/bin/sqlcmd -U SA -P \"ThePassword321&\" -S sql_service -d test_data -Q \"INSERT INTO test_table values(1, 'hello');\"
+        "
+

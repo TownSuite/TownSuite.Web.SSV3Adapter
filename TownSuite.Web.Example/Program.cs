@@ -1,6 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Data.Common;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Reflection;
 using Prometheus;
 using TownSuite.Web.SSV3Facade;
+using TownSuite.Web.SSV3Facade.Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +54,10 @@ app.UseEndpoints(endpoints =>
 //
 
 TownSuite.Web.SSV3Facade.Prometheus.SsPromethues.Initialize("");
+
+// Add sql observer
+var observer = new SqlClientObserver("townsuite_");
+IDisposable subscription = DiagnosticListener.AllListeners.Subscribe(observer);
 
 // REQUIRED
 app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
@@ -103,7 +111,7 @@ app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
             (Output: "Demonstratate a custom result can be returned.",
             ReThrow: true));
     },
-    Promethues = () => 
+    Promethues = () =>
     {
         return new TownSuite.Web.SSV3Facade.Prometheus.SsPromethues();
     }
