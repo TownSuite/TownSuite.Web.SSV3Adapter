@@ -3,6 +3,8 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Reflection;
 using Prometheus;
+using SimpleInjector;
+using TownSuite.Web.Example.ServiceStackExample;
 using TownSuite.Web.SSV3Facade;
 using TownSuite.Web.SSV3Facade.Prometheus;
 
@@ -11,6 +13,34 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+//builder.Services.AddScoped<IDoStuff>((s) =>
+//{
+//    return new DoStuff()
+//    {
+//        Test = DateTime.UtcNow.ToString()
+//    };
+//});
+
+var simpleInjectorContainer = SimpleInjectorTesting();
+object p = builder.Services.AddSimpleInjector(simpleInjectorContainer, options =>
+{
+    // AddAspNetCore() wraps web requests in a Simple Injector scope and
+    // allows request-scoped framework services to be resolved.
+    options.AddAspNetCore()
+
+        // Ensure activation of a specific framework type to be created by
+        // Simple Injector instead of the built-in configuration system.
+        // All calls are optional. You can enable what you need. For instance,
+        // ViewComponents, PageModels, and TagHelpers are not needed when you
+        // build a Web API.
+        .AddControllerActivation();
+
+    // Optionally, allow application components to depend on the non-generic
+    // ILogger (Microsoft.Extensions.Logging) or IStringLocalizer
+    // (Microsoft.Extensions.Localization) abstractions.
+    options.AddLogging();
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -116,7 +146,8 @@ app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
         return new TownSuite.Web.SSV3Facade.Prometheus.SsPromethues();
     }
 
-});
+}, serviceProvider: simpleInjectorContainer
+    );
 
 app.UseServiceStackV3FacadeSwagger(new ServiceStackV3FacadeOptions(
     serviceTypes: new Type[] {
@@ -136,3 +167,22 @@ app.MapControllers();
 
 
 app.Run();
+
+
+Container SimpleInjectorTesting()
+{
+
+    var container = new Container();
+    container.Options.DefaultScopedLifestyle = new SimpleInjector.Lifestyles.AsyncScopedLifestyle();
+    container.Options.EnableAutoVerification = false;
+
+    container.RegisterSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    container.Register<IDoStuff>(() =>
+    {
+        return new DoStuff()
+        {
+            Test = DateTime.UtcNow.ToString()
+        };
+    });
+    return container;
+}

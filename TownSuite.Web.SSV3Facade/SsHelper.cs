@@ -47,21 +47,18 @@ namespace TownSuite.Web.SSV3Facade
         {
             foreach (var param in ctor.GetParameters())
             {
-                using (var scope = _serviceProvider.CreateAsyncScope())
+                var parameter = _serviceProvider.GetService(param.ParameterType);
+                if (parameter == null)
                 {
-                    var parameter = scope.ServiceProvider.GetService(param.ParameterType);
-                    if (parameter == null)
-                    {
-                        throw new NotImplementedException($"{param.ParameterType.ToString()} not found");
-                    }
-
-                    if (_options.CustomCallBack != null)
-                    {
-                        await _options.CustomCallBack((CustomCall.Parameter, parameter, null));
-                    }
-
-                    ctorParameters.Add(parameter);
+                    throw new NotImplementedException($"{param.ParameterType.ToString()} not found");
                 }
+
+                if (_options.CustomCallBack != null)
+                {
+                    await _options.CustomCallBack((CustomCall.Parameter, parameter, null));
+                }
+
+                ctorParameters.Add(parameter);
             }
         }
 

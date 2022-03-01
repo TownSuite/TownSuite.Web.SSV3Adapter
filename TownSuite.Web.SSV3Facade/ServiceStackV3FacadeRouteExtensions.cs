@@ -25,7 +25,8 @@ namespace TownSuite.Web.SSV3Facade
 
         public static void UseServiceStackV3Facade(
            this IApplicationBuilder applicationBuilder,
-           ServiceStackV3FacadeOptions options)
+           ServiceStackV3FacadeOptions options,
+           IServiceProvider serviceProvider = null)
         {
             var builder = new RouteBuilder(applicationBuilder);
 
@@ -48,7 +49,7 @@ namespace TownSuite.Web.SSV3Facade
                     string method = context.Request.Method;
 
                     var facade = new ServiceStackFacade(options,
-                            builder.ServiceProvider,
+                             serviceProvider == null ? builder.ServiceProvider : serviceProvider,
                             prom);
                     var results = await facade.Post(path, value, method);
 
@@ -67,7 +68,8 @@ namespace TownSuite.Web.SSV3Facade
         public static void UseServiceStackV3FacadeSwagger(
           this IApplicationBuilder applicationBuilder,
           ServiceStackV3FacadeOptions options, string description = "Description",
-          string title = "Title", string version = "1.2.3.4")
+          string title = "Title", string version = "1.2.3.4",
+          IServiceProvider serviceProvider = null)
         {
             var builder = new RouteBuilder(applicationBuilder);
 
@@ -85,7 +87,8 @@ namespace TownSuite.Web.SSV3Facade
                     }
 
                     var swag = new Swagger(options,
-                        builder.ServiceProvider, description, title, version);
+                        serviceProvider == null ? builder.ServiceProvider : serviceProvider,
+                        description, title, version);
                     //string host = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}";
                     string host = $"{context.Request.Host}{context.Request.PathBase}";
                     var results = await swag.Generate(host);

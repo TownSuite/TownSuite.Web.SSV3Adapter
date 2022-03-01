@@ -26,7 +26,9 @@ namespace TownSuite.Web.SSV3Facade
 
         public Newtonsoft.Json.JsonSerializerSettings SerializerSettings { get; set; }
 
-        // Array of assemblies that will be searched to locate request, response, and service classes.
+        /// <summary>
+        /// Array of assemblies that will be searched to locate request, response, and service classes.
+        /// </summary>
         public Assembly[] SearchAssemblies { get; set; }
 
         /// <summary>

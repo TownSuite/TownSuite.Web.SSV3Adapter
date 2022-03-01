@@ -11,7 +11,6 @@ namespace TownSuite.Web.SSV3Facade
     internal class Swagger
     {
         private readonly ServiceStackV3FacadeOptions _options;
-        private readonly IServiceProvider _serviceProvider;
         private readonly SsHelper _ssHelper;
         private readonly string _description;
         private readonly string _title;
@@ -22,7 +21,6 @@ namespace TownSuite.Web.SSV3Facade
             string title, string version)
         {
             _options = options;
-            _serviceProvider = serviceProvider;
             _ssHelper = new SsHelper(options, serviceProvider);
             _description = description;
             _title = title;
