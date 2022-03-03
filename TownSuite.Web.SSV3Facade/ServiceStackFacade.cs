@@ -90,7 +90,7 @@ namespace TownSuite.Web.SSV3Facade
             var secureAttribute = await _ssHelper.GetAttributeAsync<IExecutableAttribute>(serviceInfo.Value.Service);
             if (secureAttribute != null)
             {
-                await secureAttribute.ExecuteAsync();
+                await secureAttribute.ExecuteAsync(serviceInfo, request);
                 if (secureAttribute.StatusCode < 200 && secureAttribute.StatusCode >= 300)
                 {
                     return (secureAttribute.StatusCode, null);

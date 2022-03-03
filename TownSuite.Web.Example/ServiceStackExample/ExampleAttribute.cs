@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using TownSuite.Web.SSV3Facade;
 using TownSuite.Web.SSV3Facade.Interfaces;
 
@@ -20,7 +21,8 @@ namespace TownSuite.Web.Example.ServiceStackExample
 
         public int StatusCode { get; private set; } = 0;
 
-        public Task ExecuteAsync()
+        public Task ExecuteAsync((Type Service, MethodInfo Method,
+            Type DtoType)? serviceInfo, object? request)
         {
             StatusCode = 200;
             return Task.CompletedTask;
