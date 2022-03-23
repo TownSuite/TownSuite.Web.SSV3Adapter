@@ -10,7 +10,8 @@ namespace TownSuite.Web.SSV3Facade
             SerializerSettings = new Newtonsoft.Json.JsonSerializerSettings();
         }
 
-        public string RoutePath { get; set; } = "/service/json/syncreply/{name}";
+        public string SwaggerPath { get; set; } = "/swag/swagger.json";
+        public string RoutePath { get; set; } = "/service/json/syncreply";
 
         /// <summary>
         /// Base class services inherit.  

@@ -68,13 +68,13 @@ namespace TownSuite.Web.SSV3Facade
         public static void UseServiceStackV3FacadeSwagger(
           this IApplicationBuilder applicationBuilder,
           ServiceStackV3FacadeOptions options, string description = "Description",
-          string title = "Title", string version = "1.2.3.4",
+          string title = "Title", string version = "1.0.0.0",
           IServiceProvider serviceProvider = null)
         {
             var builder = new RouteBuilder(applicationBuilder);
 
             // use middlewares to configure a route
-            builder.MapMiddlewareGet(options.RoutePath, appBuilder =>
+            builder.MapMiddlewareGet(options.SwaggerPath, appBuilder =>
             {
                 appBuilder.Run(async context =>
                 {

@@ -6,6 +6,8 @@ namespace TownSuite.Web.Example.ServiceStackExample
 		public decimal Calculated { get; set; }
 
 		public ComplexModel Model { get; set; }
+		
+		public ComplexModel TestMultiClassUsage { get; set; }
 	}
 }
 

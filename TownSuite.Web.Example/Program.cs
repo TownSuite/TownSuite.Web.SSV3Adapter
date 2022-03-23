@@ -54,7 +54,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swag/swagger.json", "v1");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -154,7 +157,8 @@ app.UseServiceStackV3FacadeSwagger(new ServiceStackV3FacadeOptions(
         typeof(TownSuite.Web.Example.ServiceStackExample.BaseServiceExample)
     })
 {
-    RoutePath = "/swag/swagger.json",
+    SwaggerPath = "/swag/swagger.json",
+    RoutePath = "/example/service/json/syncreply",
     SearchAssemblies = new Assembly[]
      {
          Assembly.Load("TownSuite.Web.Example")
