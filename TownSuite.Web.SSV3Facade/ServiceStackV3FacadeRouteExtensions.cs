@@ -74,7 +74,7 @@ namespace TownSuite.Web.SSV3Facade
             var builder = new RouteBuilder(applicationBuilder);
 
             // use middlewares to configure a route
-            builder.MapMiddlewarePost(options.RoutePath, appBuilder =>
+            builder.MapMiddlewareGet(options.RoutePath, appBuilder =>
             {
                 appBuilder.Run(async context =>
                 {

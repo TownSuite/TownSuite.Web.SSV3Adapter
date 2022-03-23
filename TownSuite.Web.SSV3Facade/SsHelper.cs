@@ -62,12 +62,18 @@ namespace TownSuite.Web.SSV3Facade
             }
         }
 
-        private static ConcurrentDictionary<Type, (Type Service, MethodInfo Method, Type DtoType)> ServiceMap
-            = new ConcurrentDictionary<Type, (Type Service, MethodInfo Method, Type DtoType)>();
+        private static ConcurrentDictionary<string, (Type Service, MethodInfo Method, Type DtoType)> ServiceMap
+            = new ConcurrentDictionary<string, (Type Service, MethodInfo Method, Type DtoType)>();
 
         public (Type Service, MethodInfo Method, Type DtoType)?
             GetService(string requestName)
         {
+
+            // TODO: ADD CACHE
+            if (ServiceMap.ContainsKey(requestName))
+            {
+                return ServiceMap[requestName];
+            }
 
             foreach (Assembly asm in _options.SearchAssemblies)
             {
@@ -79,7 +85,7 @@ namespace TownSuite.Web.SSV3Facade
                     if (methodInfo.method != null)
                     {
                         // key, value, func<TKey, TValue, TValue>
-                        ServiceMap.AddOrUpdate(methodInfo.method.DeclaringType,
+                        ServiceMap.AddOrUpdate(requestName,
                             (service, methodInfo.method, methodInfo.dtoType), (s, m) =>
                             {
                                 return (service, methodInfo.method, methodInfo.dtoType);
