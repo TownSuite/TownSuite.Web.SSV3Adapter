@@ -29,10 +29,9 @@ namespace TownSuite.Web.SSV3Facade
 
 
         private static string? jsonCached = null;
+
         public async Task<(int statusCode, string json)> Generate(string host)
         {
-
-
             if (!string.IsNullOrWhiteSpace(jsonCached))
             {
                 return (200, jsonCached ?? "");
@@ -41,10 +40,10 @@ namespace TownSuite.Web.SSV3Facade
             await PreGenerateJson(host);
 
             return (200, jsonCached ?? "");
-
         }
 
         RootInfo swagRoot;
+
         /// <summary>
         /// Used to pre
         /// </summary>
@@ -63,7 +62,7 @@ namespace TownSuite.Web.SSV3Facade
                 },
                 Host = host,
                 BasePath = _options.RoutePath,
-                Schemes = new string[] { "https" },
+                Schemes = new string[] {"https"},
                 Paths = new SortedDictionary<string, object>(),
                 Definitions = new SortedDictionary<string, object>()
             };
@@ -80,7 +79,7 @@ namespace TownSuite.Web.SSV3Facade
                 data.PostData = new Post()
                 {
                     Description = descriptionAttribute?.Description ?? "",
-                    Produces = new string[] { "application/json" },
+                    Produces = new string[] {"application/json"},
                     Responses = new Responses()
                     {
                         The200 = new The200()
@@ -93,14 +92,15 @@ namespace TownSuite.Web.SSV3Facade
                             }
                         }
                     },
-                    Consumes = new string[] { "application/json" },
+                    Consumes = new string[] {"application/json"},
                     Summary = "",
-                    Parameters = new RequestBody2[]{
+                    Parameters = new RequestBody2[]
+                    {
                         new RequestBody2()
                         {
                             In = "body",
-                            Description=descriptionAttribute?.Description ?? "",
-                            Name =  service.Value.DtoType.Name,
+                            Description = descriptionAttribute?.Description ?? "",
+                            Name = service.Value.DtoType.Name,
                             Schema = new Schema()
                             {
                                 Type = "object",
@@ -124,9 +124,9 @@ namespace TownSuite.Web.SSV3Facade
                 }
                 else
                 {
-                    responseProperties = service.Value.Method.ReturnType.GetProperties(); ;
+                    responseProperties = service.Value.Method.ReturnType.GetProperties();
                 }
-                
+
                 ExtractRequestBody(requestExpandoBody,
                     requestProperties, 0);
                 ExtractRequestBody(responseExpandoBody,
@@ -134,7 +134,6 @@ namespace TownSuite.Web.SSV3Facade
 
                 try
                 {
-
                     if (!expandoPath.ContainsKey("/" + service.Value.DtoType.Name))
                     {
                         expandoPath.Add("/" + service.Value.DtoType.Name, data);
@@ -146,7 +145,6 @@ namespace TownSuite.Web.SSV3Facade
                 }
                 catch (ArgumentException)
                 {
-
                 }
             }
 
@@ -158,8 +156,6 @@ namespace TownSuite.Web.SSV3Facade
         private void ExtractRequestBody(IDictionary<string, object> expandoBody,
             PropertyInfo[] requestProperties, int level)
         {
-
-
             //  Console.WriteLine(prop?.PropertyType?.ToString());
             //  Console.WriteLine($"{prop?.Name}|{paramType}|{basetype}".PadLeft(level * 4, '.'));
 
@@ -170,7 +166,6 @@ namespace TownSuite.Web.SSV3Facade
 
             foreach (var prop in requestProperties)
             {
-
                 string paramType = prop?.PropertyType.Name.ToLower();
                 string basetype = prop?.PropertyType?.BaseType?.Name.ToLower();
                 string namespaceType = prop?.PropertyType?.Namespace?.ToLower();
@@ -179,13 +174,12 @@ namespace TownSuite.Web.SSV3Facade
                 {
                     case "enum":
                         AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                       new
-                       {
-                           type = "string",
-                           @enum = System.Enum.GetNames(prop.PropertyType)
-                       }));
+                            new
+                            {
+                                type = "string",
+                                @enum = System.Enum.GetNames(prop.PropertyType)
+                            }));
                         continue;
-
                 }
 
 
@@ -203,48 +197,53 @@ namespace TownSuite.Web.SSV3Facade
 
                     case "byte[]":
                         AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                            new Dictionary<string, string>() {
-                                    { "type", "string" },
-                                    { "format", "binary" },
-                                    { "x-nullable", isNullable.ToString().ToLower() }
+                            new Dictionary<string, string>()
+                            {
+                                {"type", "string"},
+                                {"format", "binary"},
+                                {"x-nullable", isNullable.ToString().ToLower()}
                             }
-                            ));
+                        ));
                         break;
                     case "string[]":
                         AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                            new Dictionary<string, string>() {
-                                    { "type", "array" },
-                                    { "format", "string" },
-                                    { "x-nullable", isNullable.ToString().ToLower() }
+                            new Dictionary<string, string>()
+                            {
+                                {"type", "array"},
+                                {"format", "string"},
+                                {"x-nullable", isNullable.ToString().ToLower()}
                             }
-                            ));
+                        ));
                         break;
                     case "datetime":
                     case "date":
                         AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                            new Dictionary<string, string>() {
-                                    { "type", "string" },
-                                    { "format", "datetime" },
-                                    { "x-nullable", isNullable.ToString().ToLower() }
+                            new Dictionary<string, string>()
+                            {
+                                {"type", "string"},
+                                {"format", "datetime"},
+                                {"x-nullable", isNullable.ToString().ToLower()}
                             }
-                            ));
+                        ));
                         break;
                     case "guid":
                     case "char":
                         AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                            new Dictionary<string, string>() {
-                                    { "type", "string" },
-                                    { "format", "string" },
-                                    { "x-nullable", isNullable.ToString().ToLower() }
+                            new Dictionary<string, string>()
+                            {
+                                {"type", "string"},
+                                {"format", "string"},
+                                {"x-nullable", isNullable.ToString().ToLower()}
                             }
-                            ));
+                        ));
                         break;
                     case "decimal":
                         AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                            new Dictionary<string, string>() {
-                                    { "type", "number" },
-                                    { "format", "double" },
-                                    { "x-nullable", isNullable.ToString().ToLower() }
+                            new Dictionary<string, string>()
+                            {
+                                {"type", "number"},
+                                {"format", "double"},
+                                {"x-nullable", isNullable.ToString().ToLower()}
                             }
                         ));
                         break;
@@ -252,21 +251,21 @@ namespace TownSuite.Web.SSV3Facade
                     case "int64":
                     case "double":
                     case "float":
-                        AddIfNotPresent(expandoBody,new KeyValuePair<string,object>(prop?.Name,
-
-                            new Dictionary<string, string>() {
-                                    { "type", "number" },
-                                    { "format", paramType },
-                                    { "x-nullable", isNullable.ToString().ToLower() }
+                        AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
+                            new Dictionary<string, string>()
+                            {
+                                {"type", "number"},
+                                {"format", paramType},
+                                {"x-nullable", isNullable.ToString().ToLower()}
                             }));
                         break;
                     case "reporttype":
-                        AddIfNotPresent(expandoBody,new KeyValuePair<string, object>(prop?.Name,
-                           new
-                           {
-                               type = "string",
-                               @enum = System.Enum.GetNames(prop.PropertyType)
-                           }));
+                        AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
+                            new
+                            {
+                                type = "string",
+                                @enum = System.Enum.GetNames(prop.PropertyType)
+                            }));
                         break;
                     case "taskfactory`1":
                         return;
@@ -276,11 +275,11 @@ namespace TownSuite.Web.SSV3Facade
                     case "list`1":
 
                         if (string.Equals(prop.DeclaringType.FullName,
-                            prop.PropertyType.GenericTypeArguments.FirstOrDefault().FullName,
-                            StringComparison.InvariantCultureIgnoreCase)
-
-                            || prop.PropertyType.GenericTypeArguments.FirstOrDefault().FullName == prop.ReflectedType.FullName
-                            )
+                                prop.PropertyType.GenericTypeArguments.FirstOrDefault().FullName,
+                                StringComparison.InvariantCultureIgnoreCase)
+                            || prop.PropertyType.GenericTypeArguments.FirstOrDefault().FullName ==
+                            prop.ReflectedType.FullName
+                           )
                         {
                             continue;
                         }
@@ -296,7 +295,6 @@ namespace TownSuite.Web.SSV3Facade
 
                         ExtractRequestBody(dict,
                             prop.PropertyType.GenericTypeArguments.FirstOrDefault().GetProperties(),
-
                             level + 1);
                         AddIfNotPresent(expandoBody, kvp);
                         break;
@@ -307,10 +305,10 @@ namespace TownSuite.Web.SSV3Facade
                         if (namespaceType.StartsWith("system"))
                         {
                             AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                               new
-                               {
-                                   type = paramType
-                               }));
+                                new
+                                {
+                                    type = paramType
+                                }));
                             break;
                         }
 
@@ -334,15 +332,16 @@ namespace TownSuite.Web.SSV3Facade
                          */
 
                         AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                            new Dictionary<string, string>() {
-                                    { "$ref", $"#/definitions/{prop?.PropertyType?.Name}" },
+                            new Dictionary<string, string>()
+                            {
+                                {"$ref", $"#/definitions/{prop?.PropertyType?.Name}"},
                             }
                         ));
 
                         if (string.Equals(prop.PropertyType.FullName,
-                            prop.DeclaringType?.FullName))
+                                prop.DeclaringType?.FullName))
                         {
-                            swagRoot.Definitions.Add(kvp2);
+                            AddIfNotPresent(swagRoot.Definitions, kvp2);
                             continue;
                         }
 
@@ -351,29 +350,29 @@ namespace TownSuite.Web.SSV3Facade
                             level + 1);
                         if (!swagRoot.Definitions.ContainsKey(kvp2.Key))
                         {
-                            swagRoot.Definitions.Add(kvp2);
+                            AddIfNotPresent(swagRoot.Definitions, kvp2);
                         }
+
                         break;
-
                 }
-
             }
         }
 
-        private void AddIfNotPresent(IDictionary<string, object> expandoBody, 
+        private void AddIfNotPresent(IDictionary<string, object> expandoBody,
             KeyValuePair<string, object> kvp)
         {
             if (expandoBody.ContainsKey(kvp.Key)) return;
-            
+
             expandoBody.Add(kvp);
         }
-        
-        
+
+
         Type type = null;
         AssemblyName aName = null;
         AssemblyBuilder ab = null;
         ModuleBuilder mb = null;
         TypeBuilder tb = null;
+
         private ServiceEndPoint CanAddAttribute(string path, Type service)
         {
             // See https://stackoverflow.com/questions/14663763/how-to-add-an-attribute-to-a-property-at-runtime
@@ -385,15 +384,15 @@ namespace TownSuite.Web.SSV3Facade
 
             if (aName == null)
             {
-
                 aName = new System.Reflection.AssemblyName(service.Assembly.FullName);
             }
 
             if (ab == null)
             {
                 ab = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),
-                   AssemblyBuilderAccess.Run);
+                    AssemblyBuilderAccess.Run);
             }
+
             if (mb == null)
             {
                 mb = ab.DefineDynamicModule(aName.Name);
@@ -405,17 +404,15 @@ namespace TownSuite.Web.SSV3Facade
                     TypeAttributes.Public, type);
             }
 
-            var attrCtorParams = new Type[] { typeof(string) };
+            var attrCtorParams = new Type[] {typeof(string)};
             var attrCtorInfo = typeof(JsonPropertyAttribute).GetConstructor(attrCtorParams);
-            var attrBuilder = new CustomAttributeBuilder(attrCtorInfo, new object[] { path });
+            var attrBuilder = new CustomAttributeBuilder(attrCtorInfo, new object[] {path});
             tb.SetCustomAttribute(attrBuilder);
 
             var newType = tb.CreateType();
             var instance = Activator.CreateInstance(newType) as ServiceEndPoint;
 
             return instance;
-
         }
     }
 }
-
