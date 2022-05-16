@@ -28,11 +28,11 @@ namespace TownSuite.Web.SSV3Facade
         private readonly ServiceStackV3FacadeOptions _options;
         private readonly IServiceProvider _serviceProvider;
         private readonly SsHelper _ssHelper;
-        readonly ISSV3Promethues? _prom;
+        readonly ISSV3Prometheus? _prom;
 
         public ServiceStackFacade(ServiceStackV3FacadeOptions options,
             IServiceProvider serviceProvider,
-            ISSV3Promethues? prom = null)
+            ISSV3Prometheus? prom = null)
         {
             _options = options;
             _serviceProvider = serviceProvider;

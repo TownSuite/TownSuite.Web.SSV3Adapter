@@ -27,13 +27,21 @@ Code example.  Add this to Program.cs for new net6.0 asp.net core or Startup.cs 
 
 ```cs
 // If a service has an attribute that implements TownSuite.Web.SSV3Facade.IExecutableAttribute
-// its ExecuteAsync method will be invoked.  This is to help port over
+// its ExecuteAsync method will invoked.  This is to help port over
 // old code.  Create an attribute that also implmentats IExecutableAttribute.
 // If this is not wanted, or some other action is desired then
-// implement the CustomCallBack delegate and watch for
+// implment the CustomCallBack delegate and watch for
 // callbackType == CustomCall.ServiceInstantiated.  This method
 // will be called after the service is instantiated but before any methods
 // of the service are invoked.
+//
+
+TownSuite.Web.SSV3Facade.Prometheus.SsPrometheus.Initialize("");
+
+// Add sql observer
+var observer = new SqlClientObserver("townsuite_");
+IDisposable subscription = DiagnosticListener.AllListeners.Subscribe(observer);
+
 app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
     serviceTypes: new Type[] {
         typeof(TownSuite.Web.Example.ServiceStackExample.BaseServiceExample)
@@ -85,6 +93,11 @@ app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
             (Output: "Demonstratate a custom result can be returned.",
             ReThrow: true));
     },
+    Prometheus = () =>
+    {
+        // serves traffic at endpoint /metrics
+        return new TownSuite.Web.SSV3Facade.Prometheus.SsPrometheus();
+    }
 
 });
 ```

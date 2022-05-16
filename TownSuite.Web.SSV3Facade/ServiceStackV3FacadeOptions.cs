@@ -40,7 +40,7 @@ namespace TownSuite.Web.SSV3Facade
         public Func<(CustomCall callbackType, object serviceInstance,
             object? requestDto), Task> CustomCallBack { get; set; }
 
-        public Func<Interfaces.ISSV3Promethues>? Promethues { get; set; } = null;
+        public Func<Interfaces.ISSV3Prometheus>? Prometheus { get; set; } = null;
 
     }
 }

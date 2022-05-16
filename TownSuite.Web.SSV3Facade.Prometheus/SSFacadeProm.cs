@@ -11,7 +11,7 @@ namespace TownSuite.Web.SSV3Facade.Prometheus
     // See license.txt
     // modified https://github.com/rocklan/prometheus-net.AspNet/blob/master/src/Prometheus.AspNet/Classes/PrometheusHttpRequestModule.cs
     // for service stack facade
-    public class SsPromethues : IDisposable, ISSV3Promethues
+    public class SsPrometheus : IDisposable, ISSV3Prometheus
     {
         private static Counter _globalExceptions;
 
@@ -29,7 +29,7 @@ namespace TownSuite.Web.SSV3Facade.Prometheus
         Stopwatch timer = null;
 
         // Record the time of the begin request event.
-        public SsPromethues()
+        public SsPrometheus()
         {
             _httpRequestsInProgress.Inc();
             timer = new Stopwatch();

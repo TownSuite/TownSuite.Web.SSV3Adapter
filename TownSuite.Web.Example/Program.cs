@@ -86,7 +86,7 @@ app.UseEndpoints(endpoints =>
 // of the service are invoked.
 //
 
-TownSuite.Web.SSV3Facade.Prometheus.SsPromethues.Initialize("");
+TownSuite.Web.SSV3Facade.Prometheus.SsPrometheus.Initialize("");
 
 // Add sql observer
 var observer = new SqlClientObserver("townsuite_");
@@ -144,9 +144,9 @@ app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
             (Output: "Demonstratate a custom result can be returned.",
             ReThrow: true));
     },
-    Promethues = () =>
+    Prometheus = () =>
     {
-        return new TownSuite.Web.SSV3Facade.Prometheus.SsPromethues();
+        return new TownSuite.Web.SSV3Facade.Prometheus.SsPrometheus();
     }
 
 }, serviceProvider: simpleInjectorContainer

@@ -36,7 +36,7 @@ namespace TownSuite.Web.SSV3Facade
 
                 appBuilder.Run(async context =>
                 {
-                    using var prom = options?.Promethues();
+                    using var prom = options?.Prometheus();
 
                     string path = context.Request.Path;
 
