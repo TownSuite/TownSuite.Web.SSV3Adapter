@@ -31,7 +31,7 @@ public class Example2ServiceTest
         var facade = new ServiceStackFacade(options, serviceProvider);
         var results = await facade.Post(path, value, "post");
 
-        Assert.That(results.json, Is.EqualTo("{\"Calculated\":10008.39,\"Model\":{\"Message\":\"Hello world\"}}"));
+        Assert.That(results.json, Is.EqualTo("{\"Calculated\":10008.39,\"Model\":{\"Message\":\"Hello world\"},\"TestMultiClassUsage\":{\"Message\":\"Swagger generation test\"}}"));
         Assert.That(results.statusCode == 200);
     }
 

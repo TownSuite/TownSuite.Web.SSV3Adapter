@@ -91,7 +91,7 @@ namespace TownSuite.Web.SSV3Facade
             if (secureAttribute != null)
             {
                 await secureAttribute.ExecuteAsync(serviceInfo, request);
-                if (secureAttribute.StatusCode < 200 && secureAttribute.StatusCode >= 300)
+                if (secureAttribute.StatusCode < 200 || secureAttribute.StatusCode >= 300)
                 {
                     return (secureAttribute.StatusCode, null);
                 }
