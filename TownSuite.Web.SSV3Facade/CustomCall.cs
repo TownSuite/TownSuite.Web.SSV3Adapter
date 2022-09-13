@@ -1,9 +1,7 @@
-﻿namespace TownSuite.Web.SSV3Facade
-{
-    public enum CustomCall
-    {
-        Parameter=100,
-        ServiceInstantiated=101
-    }
-}
+﻿namespace TownSuite.Web.SSV3Facade;
 
+public enum CustomCall
+{
+    Parameter = 100,
+    ServiceInstantiated = 101
+}

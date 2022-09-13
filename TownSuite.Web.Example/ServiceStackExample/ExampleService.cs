@@ -1,30 +1,22 @@
-﻿using System;
-namespace TownSuite.Web.Example.ServiceStackExample
+﻿namespace TownSuite.Web.Example.ServiceStackExample;
+
+[ExampleAttribute]
+public class ExampleService : BaseServiceExample
 {
+    public async Task<ExampleResponse> Any(Example request)
+    {
+        // demonstrate that it works with async methods
+        await Task.Delay(100);
 
-	[ExampleAttribute()]
-	public class ExampleService : BaseServiceExample
-	{
-		public ExampleService()
-		{
-		}
-
-		public async Task<ExampleResponse> Any(Example request)
+        return new ExampleResponse
         {
-			// demonstrate that it works with async methods
-			await Task.Delay(100);
+            FirstName = "Hello",
+            LastName = "World"
+        };
+    }
 
-			return new ExampleResponse()
-			{
-				FirstName = "Hello",
-				LastName = "World"
-			};
-        }
-
-		public void SomeOtherExampleMethod()
-        {
-			Console.WriteLine("SomeOtherExampleMethod called");
-        }
-	}
+    public void SomeOtherExampleMethod()
+    {
+        Console.WriteLine("SomeOtherExampleMethod called");
+    }
 }
-

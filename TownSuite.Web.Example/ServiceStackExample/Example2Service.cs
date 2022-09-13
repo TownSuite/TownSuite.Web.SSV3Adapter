@@ -1,36 +1,29 @@
-﻿using System;
+﻿namespace TownSuite.Web.Example.ServiceStackExample;
 
-namespace TownSuite.Web.Example.ServiceStackExample
+[ExampleAttribute]
+public class Example2Service : BaseServiceExample
 {
-    [ExampleAttribute()]
-    public class Example2Service : BaseServiceExample
+    public async Task<Example2Response> Any(Example2 request)
     {
-        public Example2Service()
-        {
-        }
+        // demonstrate that it works with async methods
+        await Task.Delay(100);
 
-        public async Task<Example2Response> Any(Example2 request)
+        return new Example2Response
         {
-            // demonstrate that it works with async methods
-            await Task.Delay(100);
-
-            return new Example2Response()
+            Calculated = request.Number1 + request.Number2,
+            Model = new ComplexModel
             {
-                Calculated = request.Number1 + request.Number2,
-                Model = new ComplexModel()
-                {
-                    Message = "Hello world"
-                },
-                TestMultiClassUsage = new ComplexModel()
-                {
-                    Message = "Swagger generation test"
-                }
-            };
-        }
+                Message = "Hello world"
+            },
+            TestMultiClassUsage = new ComplexModel
+            {
+                Message = "Swagger generation test"
+            }
+        };
+    }
 
-        public void SomeOtherExampleMethod()
-        {
-            Console.WriteLine("SomeOtherExampleMethod called");
-        }
+    public void SomeOtherExampleMethod()
+    {
+        Console.WriteLine("SomeOtherExampleMethod called");
     }
 }

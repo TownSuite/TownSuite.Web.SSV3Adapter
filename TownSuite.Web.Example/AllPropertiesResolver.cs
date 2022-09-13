@@ -6,7 +6,7 @@ public class AllPropertiesResolver : DefaultContractResolver
 {
     protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
     {
-        JsonProperty property = base.CreateProperty(member, memberSerialization);
+        var property = base.CreateProperty(member, memberSerialization);
         property.Ignored = false;
         return property;
     }

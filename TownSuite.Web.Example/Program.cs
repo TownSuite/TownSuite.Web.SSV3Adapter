@@ -1,9 +1,9 @@
-﻿using System.Data.Common;
-using System.Data.SqlClient;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
+using Newtonsoft.Json;
 using Prometheus;
 using SimpleInjector;
+using SimpleInjector.Lifestyles;
 using TownSuite.Web.Example.ServiceStackExample;
 using TownSuite.Web.SSV3Facade;
 using TownSuite.Web.SSV3Facade.Prometheus;
@@ -54,10 +54,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swag/swagger.json", "v1");
-    });
+    app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swag/swagger.json", "v1"); });
 }
 
 app.UseHttpsRedirection();
@@ -86,7 +83,7 @@ app.UseEndpoints(endpoints =>
 // of the service are invoked.
 //
 
-TownSuite.Web.SSV3Facade.Prometheus.SsPrometheus.Initialize("");
+SsPrometheus.Initialize("");
 
 // Add sql observer
 var observer = new SqlClientObserver("townsuite_");
@@ -94,77 +91,75 @@ IDisposable subscription = DiagnosticListener.AllListeners.Subscribe(observer);
 
 // REQUIRED
 app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
-    serviceTypes: new Type[] {
-        typeof(TownSuite.Web.Example.ServiceStackExample.BaseServiceExample)
-    })
-{
-    RoutePath = "/example/service/json/syncreply/{name}",
-    SerializerSettings = new Newtonsoft.Json.JsonSerializerSettings
-    {
-        NullValueHandling = Newtonsoft.Json.NullValueHandling.Include,
-        ContractResolver = new AllPropertiesResolver(),
-        Converters = {
-                        new BackwardsCompatStringConverter()
-                    }
-    },
-    SearchAssemblies = new Assembly[]
-     {
-         Assembly.Load("TownSuite.Web.Example")
-     },
-    CustomCallBack = ((CustomCall callbackType, object serviceInstance,
-          object? requestDto) args) =>
-    {
-        // Example to demonstrate custom callback hook types
-
-        if (args.callbackType == CustomCall.ServiceInstantiated)
+        serviceTypes: new Type[]
         {
-            Console.WriteLine($"Service {args.serviceInstance.GetType().ToString()} initialized.");
-            // This is the place to do custom authorization work or
-            // other custom work that needs to take place before service methods are called
-        }
-
-
-        // Example of executing an extra method regardless based solely on serviceInstance type
-        if (args.serviceInstance.GetType() == typeof(TownSuite.Web.Example.ServiceStackExample.ExampleService))
+            typeof(BaseServiceExample)
+        })
+    {
+        RoutePath = "/example/service/json/syncreply/{name}",
+        SerializerSettings = new JsonSerializerSettings
         {
-            var serviceInstance = (args.serviceInstance as TownSuite.Web.Example.ServiceStackExample.ExampleService);
-            serviceInstance?.SomeOtherExampleMethod();
-        }
+            NullValueHandling = NullValueHandling.Include,
+            ContractResolver = new AllPropertiesResolver(),
+            Converters =
+            {
+                new BackwardsCompatStringConverter()
+            }
+        },
+        SearchAssemblies = new Assembly[]
+        {
+            Assembly.Load("TownSuite.Web.Example")
+        },
+        CustomCallBack = ((CustomCall callbackType, object serviceInstance,
+            object? requestDto) args) =>
+        {
+            // Example to demonstrate custom callback hook types
 
-        return Task.CompletedTask;
-    },
-    CustomErrorHandler = async (
-        (Type Service, MethodInfo Method, Type DtoType)? serviceInfo,
-        object instance, Exception ex
+            if (args.callbackType == CustomCall.ServiceInstantiated)
+            {
+                Console.WriteLine($"Service {args.serviceInstance.GetType().ToString()} initialized.");
+                // This is the place to do custom authorization work or
+                // other custom work that needs to take place before service methods are called
+            }
+
+
+            // Example of executing an extra method regardless based solely on serviceInstance type
+            if (args.serviceInstance.GetType() == typeof(ExampleService))
+            {
+                var serviceInstance = (args.serviceInstance as ExampleService);
+                serviceInstance?.SomeOtherExampleMethod();
+            }
+
+            return Task.CompletedTask;
+        },
+        CustomErrorHandler = async (
+            (Type Service, MethodInfo Method, Type DtoType)? serviceInfo,
+            object instance, Exception ex
         ) =>
-    {
-        // Example to demonstrate a custom error handling hook
+        {
+            // Example to demonstrate a custom error handling hook
 
-        return await Task.FromResult<(string Output, bool ReThrow)>(
-            (Output: "Demonstratate a custom result can be returned.",
-            ReThrow: true));
-    },
-    Prometheus = () =>
-    {
-        return new TownSuite.Web.SSV3Facade.Prometheus.SsPrometheus();
-    }
-
-}, serviceProvider: simpleInjectorContainer
-    );
+            return await Task.FromResult<(string Output, bool ReThrow)>(
+                (Output: "Demonstratate a custom result can be returned.",
+                    ReThrow: true));
+        },
+        Prometheus = () => { return new SsPrometheus(); }
+    }, serviceProvider: simpleInjectorContainer
+);
 
 app.UseServiceStackV3FacadeSwagger(new ServiceStackV3FacadeOptions(
-    serviceTypes: new Type[] {
-        typeof(TownSuite.Web.Example.ServiceStackExample.BaseServiceExample)
+    serviceTypes: new Type[]
+    {
+        typeof(BaseServiceExample)
     })
 {
     SwaggerPath = "/swag/swagger.json",
     RoutePath = "/example/service/json/syncreply",
     SearchAssemblies = new Assembly[]
-     {
-         Assembly.Load("TownSuite.Web.Example")
-     },
+    {
+        Assembly.Load("TownSuite.Web.Example")
+    }
 });
-
 
 
 app.MapControllers();
@@ -175,9 +170,8 @@ app.Run();
 
 Container SimpleInjectorTesting()
 {
-
     var container = new Container();
-    container.Options.DefaultScopedLifestyle = new SimpleInjector.Lifestyles.AsyncScopedLifestyle();
+    container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
     container.Options.EnableAutoVerification = false;
 
     container.RegisterSingleton<IHttpContextAccessor, HttpContextAccessor>();

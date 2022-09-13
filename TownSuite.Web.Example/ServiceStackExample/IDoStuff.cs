@@ -1,7 +1,6 @@
-﻿namespace TownSuite.Web.Example.ServiceStackExample
+﻿namespace TownSuite.Web.Example.ServiceStackExample;
+
+public interface IDoStuff
 {
-    public interface IDoStuff
-    {
-        string Test { get; set; }
-    }
+    string Test { get; set; }
 }

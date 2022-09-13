@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Collections.Generic;
+﻿using System.Data.Common;
+using System.Diagnostics;
 using Microsoft.Extensions.DiagnosticAdapter;
-using System.Data.Common;
 using Prometheus;
 
 namespace TownSuite.Web.SSV3Facade.Prometheus;
-
 
 // https://bartwullems.blogspot.com/2021/01/using-systemdiagnosticdiagnosticsource_6.html
 // https://bartwullems.blogspot.com/2021/01/using-systemdiagnosticdiagnosticsource.html
@@ -15,23 +12,25 @@ namespace TownSuite.Web.SSV3Facade.Prometheus;
 
 public sealed class SqlClientObserver : IObserver<DiagnosticListener>
 {
-    private readonly List<IDisposable> _listeners = new List<IDisposable>();
-
     private static Gauge _sqlTotal;
     private static Histogram _sqlDuration;
+    private readonly List<IDisposable> _listeners = new();
+
+
+    private readonly AsyncLocal<Stopwatch> _stopwatch = new();
 
     public SqlClientObserver(string prefix = "")
     {
-
         _sqlTotal = Metrics
-            .CreateGauge($"{prefix}sql_commands_executed_total", "Provides the count of sql commands sent to a database.",
+            .CreateGauge($"{prefix}sql_commands_executed_total",
+                "Provides the count of sql commands sent to a database.",
                 new GaugeConfiguration { LabelNames = new[] { "commandtype", "commandtext", "server", "database" } });
 
         _sqlDuration = Metrics
-             .CreateHistogram($"{prefix}sql_commands_duration_seconds", "The duration of individual sql commands sent to a database.",
-                 new HistogramConfiguration { LabelNames = new[] { "commandtype", "commandtext", "server", "database" } });
-
-
+            .CreateHistogram($"{prefix}sql_commands_duration_seconds",
+                "The duration of individual sql commands sent to a database.",
+                new HistogramConfiguration
+                    { LabelNames = new[] { "commandtype", "commandtext", "server", "database" } });
     }
 
     void IObserver<DiagnosticListener>.OnNext(DiagnosticListener diagnosticListener)
@@ -48,7 +47,8 @@ public sealed class SqlClientObserver : IObserver<DiagnosticListener>
 
 
     void IObserver<DiagnosticListener>.OnError(Exception error)
-    { }
+    {
+    }
 
     void IObserver<DiagnosticListener>.OnCompleted()
     {
@@ -59,8 +59,6 @@ public sealed class SqlClientObserver : IObserver<DiagnosticListener>
         }
     }
 
-
-    private readonly AsyncLocal<Stopwatch> _stopwatch = new AsyncLocal<Stopwatch>();
     [DiagnosticName("System.Data.SqlClient.WriteCommandBefore")]
     public void OnCommandBefore(DbCommand command)
     {
@@ -89,7 +87,7 @@ public sealed class SqlClientObserver : IObserver<DiagnosticListener>
 
     private void UpdateMetrics(DbCommand command)
     {
-        double timeTakenSecs = _stopwatch.Value.ElapsedMilliseconds / 1000d;
+        var timeTakenSecs = _stopwatch.Value.ElapsedMilliseconds / 1000d;
 
         _sqlDuration.WithLabels(command.CommandType.ToString(),
             command.CommandText,
@@ -124,6 +122,4 @@ public sealed class SqlClientObserver : IObserver<DiagnosticListener>
     //{
     //    Console.WriteLine($"After Close Connection: {con.Database}");
     //}
-
 }
-

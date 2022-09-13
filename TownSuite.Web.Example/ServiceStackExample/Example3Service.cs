@@ -1,32 +1,29 @@
-﻿using System;
-namespace TownSuite.Web.Example.ServiceStackExample
+﻿namespace TownSuite.Web.Example.ServiceStackExample;
+
+[ExampleAttribute]
+public class ExampleService3 : BaseServiceExample
 {
+    private readonly IDoStuff _stuff;
 
-    [ExampleAttribute()]
-    public class ExampleService3 : BaseServiceExample
+    public ExampleService3(IDoStuff stuff)
     {
-        readonly IDoStuff _stuff;
-        public ExampleService3(IDoStuff stuff)
-        {
-            _stuff = stuff;
-        }
+        _stuff = stuff;
+    }
 
-        public async Task<Example3Response> Any(Example3 request)
-        {
-            // demonstrate that it works with async methods
-            await Task.Delay(100);
+    public async Task<Example3Response> Any(Example3 request)
+    {
+        // demonstrate that it works with async methods
+        await Task.Delay(100);
 
-            return new Example3Response()
-            {
-                FirstName = "Hello",
-                LastName = $"World_{_stuff.Test}"
-            };
-        }
-
-        public void SomeOtherExampleMethod()
+        return new Example3Response
         {
-            Console.WriteLine("SomeOtherExampleMethod called");
-        }
+            FirstName = "Hello",
+            LastName = $"World_{_stuff.Test}"
+        };
+    }
+
+    public void SomeOtherExampleMethod()
+    {
+        Console.WriteLine("SomeOtherExampleMethod called");
     }
 }
-

@@ -1,23 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
 
-    <AssemblyTitle>TownSuite.Web.SSV3Facade.Interfaces</AssemblyTitle>
-    <Company>TownSuite Municipal Software Inc.</Company>
-    <Product>SSV3 Facade Interfaces</Product>
-    <Description>Interfaces required to work with the SSV3Facade project</Description>
-    <Copyright>TownSuite Muncipal Software Inc. 2021</Copyright>
-    <Deterministic>true</Deterministic>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>1.0.8</Version>
-    <AssemblyVersion>1.0.8</AssemblyVersion>
-    <FileVersion>1.0.8</FileVersion>
+        <AssemblyTitle>TownSuite.Web.SSV3Facade.Interfaces</AssemblyTitle>
+        <Company>TownSuite Municipal Software Inc.</Company>
+        <Product>SSV3 Facade Interfaces</Product>
+        <Description>Interfaces required to work with the SSV3Facade project</Description>
+        <Copyright>TownSuite Muncipal Software Inc. 2021</Copyright>
+        <Deterministic>true</Deterministic>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <Version>1.0.8</Version>
+        <AssemblyVersion>1.0.8</AssemblyVersion>
+        <FileVersion>1.0.8</FileVersion>
 
-    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
+        <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
 
 </Project>

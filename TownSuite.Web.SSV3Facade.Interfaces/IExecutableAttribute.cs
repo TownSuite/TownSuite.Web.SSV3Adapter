@@ -1,13 +1,11 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace TownSuite.Web.SSV3Facade.Interfaces
+namespace TownSuite.Web.SSV3Facade.Interfaces;
+
+public interface IExecutableAttribute
 {
-    public interface IExecutableAttribute
-    {
-        Task ExecuteAsync((Type Service, MethodInfo Method,
-            Type DtoType)? serviceInfo, object? request);
-        int StatusCode { get; }
-    }
-}
+    int StatusCode { get; }
 
+    Task ExecuteAsync((Type Service, MethodInfo Method,
+        Type DtoType)? serviceInfo, object? request);
+}

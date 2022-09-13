@@ -1,55 +1,56 @@
-﻿using System;
-using System.Reflection;
-using Microsoft.AspNetCore.Components;
+﻿using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using TownSuite.Web.Example.ServiceStackExample;
 using TownSuite.Web.SSV3Facade;
 
-namespace TownSuite.Web.Tests
+namespace TownSuite.Web.Tests;
+
+internal static class Settings
 {
-    internal static class Settings
+    public static ServiceStackV3FacadeOptions GetSettings()
     {
-
-        public static ServiceStackV3FacadeOptions GetSettings()
-        {
-
-            return new ServiceStackV3FacadeOptions(
-                serviceTypes: new Type[] {
-                    typeof(TownSuite.Web.Example.ServiceStackExample.BaseServiceExample)
-                })
+        return new ServiceStackV3FacadeOptions(
+            new[]
             {
-                RoutePath = "/service/json/syncreply/{name}",
-                SerializerSettings = new Newtonsoft.Json.JsonSerializerSettings
-                {
-                    NullValueHandling = Newtonsoft.Json.NullValueHandling.Include,
-                    ContractResolver = new AllPropertiesResolver(),
-                    Converters = {
-                        new BackwardsCompatStringConverter()
-                    }
-                },
-                SearchAssemblies = new Assembly[]
-                 {
-                     Assembly.Load("TownSuite.Web.Example")
-                 }
-
-            };
-        }
-
-        public static IServiceProvider GetServiceProvider()
+                typeof(BaseServiceExample)
+            })
         {
-            var services = new ServiceCollection();
-
-            services.AddTransient<IHttpContextAccessor, StubHttpContextAccessor>();
-           
-      
-            var serviceProvider = services.BuildServiceProvider();
-            return serviceProvider;
-        }
+            RoutePath = "/service/json/syncreply/{name}",
+            SerializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Include,
+                ContractResolver = new AllPropertiesResolver(),
+                Converters =
+                {
+                    new BackwardsCompatStringConverter()
+                }
+            },
+            SearchAssemblies = new[]
+            {
+                Assembly.Load("TownSuite.Web.Example")
+            }
+        };
     }
 
-    internal class StubHttpContextAccessor : IHttpContextAccessor
+    public static IServiceProvider GetServiceProvider()
     {
-        public HttpContext? HttpContext { get => null; set => throw new NotImplementedException(); }
+        var services = new ServiceCollection();
+
+        services.AddTransient<IHttpContextAccessor, StubHttpContextAccessor>();
+
+
+        var serviceProvider = services.BuildServiceProvider();
+        return serviceProvider;
     }
 }
 
+internal class StubHttpContextAccessor : IHttpContextAccessor
+{
+    public HttpContext? HttpContext
+    {
+        get => null;
+        set => throw new NotImplementedException();
+    }
+}

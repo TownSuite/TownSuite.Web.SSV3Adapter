@@ -1,11 +1,8 @@
-﻿using System;
-namespace TownSuite.Web.Example.ServiceStackExample
+﻿namespace TownSuite.Web.Example.ServiceStackExample;
+
+public class ExampleDataProfilingResponse
 {
-	public class ExampleDataProfilingResponse
-	{
-		public decimal Calculated { get; set; }
+    public decimal Calculated { get; set; }
 
-		public ComplexModel Model { get; set; }
-	}
+    public ComplexModel Model { get; set; }
 }
-
