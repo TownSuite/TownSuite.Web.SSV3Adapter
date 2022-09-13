@@ -9,7 +9,7 @@ public static class ServiceStackV3FacadeRouteExtensions
     public static void UseServiceStackV3Facade(
         this IApplicationBuilder applicationBuilder,
         ServiceStackV3FacadeOptions options,
-        IServiceProvider serviceProvider = null)
+        IServiceProvider serviceProvider)
     {
         var builder = new RouteBuilder(applicationBuilder);
 
@@ -18,7 +18,7 @@ public static class ServiceStackV3FacadeRouteExtensions
         {
             appBuilder.Run(async context =>
             {
-                using var prom = options?.Prometheus();
+                using var prom = options?.Prometheus?.Invoke();
 
                 string path = context.Request.Path;
 
@@ -31,7 +31,7 @@ public static class ServiceStackV3FacadeRouteExtensions
                 var method = context.Request.Method;
 
                 var facade = new ServiceStackFacade(options,
-                    serviceProvider == null ? builder.ServiceProvider : serviceProvider,
+                    serviceProvider,
                     prom);
                 var results = await facade.Post(path, value, method);
 

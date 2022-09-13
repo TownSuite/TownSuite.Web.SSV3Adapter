@@ -34,7 +34,7 @@ internal class ServiceStackFacade
         // TODO: make sure when calling have the front end code include the full namespace of the dto
         // For example call https://localhost/ss/index/Some.Namespace.And.Type
 
-        var name = path?.Split('/')?.LastOrDefault() ?? "";
+        var name = path.Split('/').LastOrDefault() ?? "";
 
         if (string.Equals(name, "")) return (400, "Service not specified");
         // magic routing based on the name starts here
@@ -44,20 +44,20 @@ internal class ServiceStackFacade
 
         if (!serviceInfo.HasValue)
         {
-            _prom.ExceptionTriggered();
+            _prom?.ExceptionTriggered();
             return (404, "Service Not found");
         }
 
         if (serviceInfo.Value.Method == null || serviceInfo.HasValue == false)
         {
-            _prom.ExceptionTriggered();
+            _prom?.ExceptionTriggered();
             return (404, "Method not found");
         }
 
         var request = JsonConvert.DeserializeObject(value ?? "", serviceInfo.Value.DtoType,
             _options.SerializerSettings);
 
-        var results = await CreateAndInvokeService(serviceInfo, request);
+        var results = await CreateAndInvokeService(serviceInfo.Value, request);
         _prom?.EndRequest(results.statusCode.ToString(),
             method,
             name, serviceInfo.Value.Method.Name);
@@ -65,9 +65,9 @@ internal class ServiceStackFacade
     }
 
     private async Task<(int statusCode, string? json)> CreateAndInvokeService((Type Service, MethodInfo Method,
-        Type DtoType)? serviceInfo, object? request)
+        Type DtoType) serviceInfo, object? request)
     {
-        var secureAttribute = await _ssHelper.GetAttributeAsync<IExecutableAttribute>(serviceInfo.Value.Service);
+        var secureAttribute = await _ssHelper.GetAttributeAsync<IExecutableAttribute>(serviceInfo.Service);
         if (secureAttribute != null)
         {
             await secureAttribute.ExecuteAsync(serviceInfo, request);
@@ -75,7 +75,7 @@ internal class ServiceStackFacade
                 return (secureAttribute.StatusCode, null);
         }
 
-        var authorizationAttribute = await _ssHelper.GetAttributeAsync<IAuthorizationFilter>(serviceInfo.Value.Service);
+        var authorizationAttribute = await _ssHelper.GetAttributeAsync<IAuthorizationFilter>(serviceInfo.Service);
         if (authorizationAttribute != null)
         {
             var context = _serviceProvider.GetService<AuthorizationFilterContext>();
@@ -84,7 +84,7 @@ internal class ServiceStackFacade
             authorizationAttribute.OnAuthorization(context);
         }
 
-        var instance = await _ssHelper.ConstructServiceObjectAsync(serviceInfo.Value.Service);
+        var instance = await _ssHelper.ConstructServiceObjectAsync(serviceInfo.Service);
         if (!_ssHelper.IsServiceType(instance.GetType()))
             throw new NotImplementedException("Only service type objects supported.");
 
@@ -98,16 +98,16 @@ internal class ServiceStackFacade
         Task t = null;
         try
         {
-            if (SsHelper.IsAsyncMethod(serviceInfo.Value.Method))
+            if (SsHelper.IsAsyncMethod(serviceInfo.Method))
             {
-                t = serviceInfo.Value.Method.Invoke(instance, arguments) as Task;
+                t = serviceInfo.Method.Invoke(instance, arguments) as Task;
                 await t.ConfigureAwait(false);
                 var response = t.GetType().GetProperty("Result").GetValue(t);
                 output = JsonConvert.SerializeObject(response);
                 return (200, output);
             }
 
-            var val = await Task.FromResult(serviceInfo.Value.Method.Invoke(instance, arguments));
+            var val = await Task.FromResult(serviceInfo.Method.Invoke(instance, arguments));
             t = Task.FromResult(val);
             output = JsonConvert.SerializeObject(val);
             return (200, output);
@@ -132,6 +132,10 @@ internal class ServiceStackFacade
             }
 
             return (200, output);
+        }
+        finally
+        {
+            t?.Dispose();
         }
     }
 }
