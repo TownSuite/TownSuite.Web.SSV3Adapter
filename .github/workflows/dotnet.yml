@@ -20,7 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore TownSuite.Web.SSV3Facade.sln
     - name: Build
-      run: dotnet build TownSuite.Web.SSV3Facade.sln --no-restore
+      run: dotnet build -c Release TownSuite.Web.SSV3Facade.sln --no-restore
     - name: Test
       run: dotnet test TownSuite.Web.SSV3Facade.sln --no-build --verbosity normal
     - name: Archive artifacts
@@ -28,5 +28,7 @@ jobs:
       with:
         name: nuget-packages
         path: |
-          **/bin/Release/*.nupkg
+          TownSuite.Web.SSV3Facade.Interfaces/bin/Release/*.nupkg
+          TownSuite.Web.SSV3Facade.Prometheus/bin/Release/*.nupkg
+          TownSuite.Web.SSV3Facade/bin/Release/*.nupkg
         retention-days: 1
