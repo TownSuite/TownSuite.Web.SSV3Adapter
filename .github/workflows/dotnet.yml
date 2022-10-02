@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build -c Release TownSuite.Web.SSV3Facade.sln --no-restore
     - name: Test
-      run: dotnet test TownSuite.Web.SSV3Facade.sln --no-build --verbosity normal
+      run: dotnet test TownSuite.Web.SSV3Facade.sln --verbosity normal
     - name: Archive artifacts
       uses: actions/upload-artifact@v3
       with:
