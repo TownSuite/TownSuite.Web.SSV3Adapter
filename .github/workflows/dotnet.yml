@@ -32,3 +32,8 @@ jobs:
           TownSuite.Web.SSV3Facade.Prometheus/bin/Release/*.nupkg
           TownSuite.Web.SSV3Facade/bin/Release/*.nupkg
         retention-days: 1
+    - name: Generate XML SBOM
+      uses: CycloneDX/gh-dotnet-generate-sbom@v1
+      with:
+        path: ./TownSuite.Web.SSV3Facade.sln
+  
