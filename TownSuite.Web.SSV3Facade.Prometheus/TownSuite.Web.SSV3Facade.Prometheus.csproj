@@ -25,7 +25,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="3.1.29"/>
+        <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="3.1.30"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\TownSuite.Web.SSV3Facade.Interfaces\TownSuite.Web.SSV3Facade.Interfaces.csproj"/>
