@@ -24,7 +24,7 @@
         <None Remove="prometheus-net.AspNetCore"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0"/>
+        <PackageReference Include="prometheus-net.AspNetCore" Version="7.0.0"/>
         <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="3.1.30"/>
     </ItemGroup>
     <ItemGroup>
