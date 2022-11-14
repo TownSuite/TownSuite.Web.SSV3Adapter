@@ -15,7 +15,7 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
         <PackageReference Include="prometheus-net.AspNetCore" Version="7.0.0"/>
-        <PackageReference Include="System.Data.SqlClient" Version="4.8.4"/>
+        <PackageReference Include="System.Data.SqlClient" Version="4.8.5"/>
         <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="5.4.0"/>
     </ItemGroup>
 
