@@ -1,4 +1,4 @@
-﻿namespace TownSuite.Web.SSV3Facade.Interfaces;
+﻿namespace TownSuite.Web.SSV3Adapter.Interfaces;
 
 public interface ISSV3Prometheus : IDisposable
 {

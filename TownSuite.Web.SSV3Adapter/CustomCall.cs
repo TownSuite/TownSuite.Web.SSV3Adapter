@@ -1,4 +1,4 @@
-﻿namespace TownSuite.Web.SSV3Facade;
+﻿namespace TownSuite.Web.SSV3Adapter;
 
 public enum CustomCall
 {

@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace TownSuite.Web.SSV3Facade;
+namespace TownSuite.Web.SSV3Adapter;
 
-public static class ServiceStackV3FacadeRouteExtensions
+public static class ServiceStackV3AdapterRouteExtensions
 {
-    public static void UseServiceStackV3Facade(
+    public static void UseServiceStackV3Adapter(
         this IApplicationBuilder applicationBuilder,
-        ServiceStackV3FacadeOptions options,
+        ServiceStackV3AdapterOptions options,
         IServiceProvider serviceProvider)
     {
         var builder = new RouteBuilder(applicationBuilder);
@@ -30,10 +30,10 @@ public static class ServiceStackV3FacadeRouteExtensions
 
                 var method = context.Request.Method;
 
-                var facade = new ServiceStackFacade(options,
+                var Adapter = new ServiceStackAdapter(options,
                     serviceProvider,
                     prom);
-                var results = await facade.Post(path, value, method);
+                var results = await Adapter.Post(path, value, method);
 
                 context.Response.StatusCode = results.statusCode;
                 context.Response.ContentType = "application/json";
@@ -45,9 +45,9 @@ public static class ServiceStackV3FacadeRouteExtensions
     }
 
 
-    public static void UseServiceStackV3FacadeSwagger(
+    public static void UseServiceStackV3AdapterSwagger(
         this IApplicationBuilder applicationBuilder,
-        ServiceStackV3FacadeOptions options, string description = "Description",
+        ServiceStackV3AdapterOptions options, string description = "Description",
         string title = "Title", string version = "1.0.0.0",
         IServiceProvider serviceProvider = null)
     {

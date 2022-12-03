@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
 using Newtonsoft.Json;
-using TownSuite.Web.SSV3Facade.Interfaces;
+using TownSuite.Web.SSV3Adapter.Interfaces;
 
-namespace TownSuite.Web.SSV3Facade;
+namespace TownSuite.Web.SSV3Adapter;
 
-public class ServiceStackV3FacadeOptions
+public class ServiceStackV3AdapterOptions
 {
-    public ServiceStackV3FacadeOptions(Type[] serviceTypes)
+    public ServiceStackV3AdapterOptions(Type[] serviceTypes)
     {
         ServiceTypes = serviceTypes;
         SerializerSettings = new JsonSerializerSettings();

@@ -5,8 +5,8 @@ using Prometheus;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using TownSuite.Web.Example.ServiceStackExample;
-using TownSuite.Web.SSV3Facade;
-using TownSuite.Web.SSV3Facade.Prometheus;
+using TownSuite.Web.SSV3Adapter;
+using TownSuite.Web.SSV3Adapter.Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +73,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapMetrics();
 });
 
-// If a service has an attribute that implements TownSuite.Web.SSV3Facade.IExecutableAttribute
+// If a service has an attribute that implements TownSuite.Web.SSV3Adapter.IExecutableAttribute
 // its ExecuteAsync method will invoked.  This is to help port over
 // old code.  Create an attribute that also implmentats IExecutableAttribute.
 // If this is not wanted, or some other action is desired then
@@ -90,7 +90,7 @@ var observer = new SqlClientObserver("townsuite_");
 IDisposable subscription = DiagnosticListener.AllListeners.Subscribe(observer);
 
 // REQUIRED
-app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
+app.UseServiceStackV3Adapter(new ServiceStackV3AdapterOptions(
         serviceTypes: new Type[]
         {
             typeof(BaseServiceExample)
@@ -147,7 +147,7 @@ app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
     }, serviceProvider: simpleInjectorContainer
 );
 
-app.UseServiceStackV3FacadeSwagger(new ServiceStackV3FacadeOptions(
+app.UseServiceStackV3AdapterSwagger(new ServiceStackV3AdapterOptions(
     serviceTypes: new Type[]
     {
         typeof(BaseServiceExample)

@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using TownSuite.Web.SSV3Facade.Interfaces;
+using TownSuite.Web.SSV3Adapter.Interfaces;
 
-namespace TownSuite.Web.SSV3Facade;
+namespace TownSuite.Web.SSV3Adapter;
 
 internal class SsHelper
 {
@@ -16,10 +16,10 @@ internal class SsHelper
         SwaggerServiceMap
             = new();
 
-    private readonly ServiceStackV3FacadeOptions _options;
+    private readonly ServiceStackV3AdapterOptions _options;
     private readonly IServiceProvider _serviceProvider;
 
-    public SsHelper(ServiceStackV3FacadeOptions options,
+    public SsHelper(ServiceStackV3AdapterOptions options,
         IServiceProvider serviceProvider)
     {
         _options = options;

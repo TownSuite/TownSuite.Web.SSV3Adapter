@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TownSuite.Web.Example.ServiceStackExample;
-using TownSuite.Web.SSV3Facade;
+using TownSuite.Web.SSV3Adapter;
 
 namespace TownSuite.Web.Tests;
 
 internal static class Settings
 {
-    public static ServiceStackV3FacadeOptions GetSettings()
+    public static ServiceStackV3AdapterOptions GetSettings()
     {
-        return new ServiceStackV3FacadeOptions(
+        return new ServiceStackV3AdapterOptions(
             new[]
             {
                 typeof(BaseServiceExample)

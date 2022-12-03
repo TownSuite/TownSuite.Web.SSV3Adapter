@@ -20,13 +20,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TownSuite.Web.SSV3Facade\TownSuite.Web.SSV3Facade.csproj">
+        <ProjectReference Include="..\TownSuite.Web.SSV3Adapter\TownSuite.Web.SSV3Adapter.csproj">
             <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
         </ProjectReference>
-        <ProjectReference Include="..\TownSuite.Web.SSV3Facade.Prometheus\TownSuite.Web.SSV3Facade.Prometheus.csproj">
+        <ProjectReference Include="..\TownSuite.Web.SSV3Adapter.Prometheus\TownSuite.Web.SSV3Adapter.Prometheus.csproj">
             <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
         </ProjectReference>
-        <ProjectReference Include="..\TownSuite.Web.SSV3Facade.Interfaces\TownSuite.Web.SSV3Facade.Interfaces.csproj">
+        <ProjectReference Include="..\TownSuite.Web.SSV3Adapter.Interfaces\TownSuite.Web.SSV3Adapter.Interfaces.csproj">
             <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
         </ProjectReference>
     </ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using TownSuite.Web.Example.ServiceStackExample;
-using TownSuite.Web.SSV3Facade;
+using TownSuite.Web.SSV3Adapter;
 
 namespace TownSuite.Web.Tests;
 
@@ -28,8 +28,8 @@ public class Example2ServiceTest
             });
 
 
-        var facade = new ServiceStackFacade(options, serviceProvider);
-        var results = await facade.Post(path, value, "post");
+        var adapter = new ServiceStackAdapter(options, serviceProvider);
+        var results = await adapter.Post(path, value, "post");
 
         Assert.That(results.json,
             Is.EqualTo(

@@ -1,9 +1,9 @@
 
-TownSuite.Web.SSV3Facade is a simple middleware implementation to help port old Service Stack version 3 .net 3.5 and 4.8 code to net6.0 and asp.net core.
+TownSuite.Web.SSV3Adapter is a simple middleware implementation to help port old Service Stack version 3 .net 3.5 and 4.8 code to net6.0 and asp.net core.
 
 The premise is, existing code that works can be upgraded to a new tech stack with minimal changes while permitting and encourging use of newer technologies as needed.
 
-This facade permits hosting of both webapi controllers and older service stack v3 code in the same project.
+This adapter permits hosting of both webapi controllers and older service stack v3 code in the same project.
 
 
 The original ServiceStack V3 code can be found at https://github.com/ServiceStackV3/ServiceStackV3.
@@ -12,7 +12,7 @@ The original ServiceStack V3 code can be found at https://github.com/ServiceStac
 
 1. Only covers the basics of service stack v3
 2. It is expected that the code being ported will need to hook into newer asp.net core features
-3. The facade only returns json
+3. The adapter only returns json
 4. Newtonsoft Json.NET is used
 
 # Usage
@@ -26,7 +26,7 @@ Add nuget package [Add Name Here]
 Code example.  Add this to Program.cs for new net6.0 asp.net core or Startup.cs files.
 
 ```cs
-// If a service has an attribute that implements TownSuite.Web.SSV3Facade.IExecutableAttribute
+// If a service has an attribute that implements TownSuite.Web.SSV3Adapter.IExecutableAttribute
 // its ExecuteAsync method will invoked.  This is to help port over
 // old code.  Create an attribute that also implmentats IExecutableAttribute.
 // If this is not wanted, or some other action is desired then
@@ -36,13 +36,13 @@ Code example.  Add this to Program.cs for new net6.0 asp.net core or Startup.cs 
 // of the service are invoked.
 //
 
-TownSuite.Web.SSV3Facade.Prometheus.SsPrometheus.Initialize("");
+TownSuite.Web.SSV3Adapter.Prometheus.SsPrometheus.Initialize("");
 
 // Add sql observer
 var observer = new SqlClientObserver("townsuite_");
 IDisposable subscription = DiagnosticListener.AllListeners.Subscribe(observer);
 
-app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
+app.UseServiceStackV3Adapter(new ServiceStackV3AdapterOptions(
     serviceTypes: new Type[] {
         typeof(TownSuite.Web.Example.ServiceStackExample.BaseServiceExample)
     })
@@ -96,7 +96,7 @@ app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
     Prometheus = () =>
     {
         // serves traffic at endpoint /metrics
-        return new TownSuite.Web.SSV3Facade.Prometheus.SsPrometheus();
+        return new TownSuite.Web.SSV3Adapter.Prometheus.SsPrometheus();
     }
 
 });
@@ -105,7 +105,7 @@ app.UseServiceStackV3Facade(new ServiceStackV3FacadeOptions(
 If swagger json can also be generated at runtime by adding the following.
 
 ```cs
-app.UseServiceStackV3FacadeSwagger(new ServiceStackV3FacadeOptions(
+app.UseServiceStackV3AdapterSwagger(new ServiceStackV3AdapterOptions(
     serviceTypes: new Type[] {
         typeof(TownSuite.Web.Example.ServiceStackExample.BaseServiceExample)
     })

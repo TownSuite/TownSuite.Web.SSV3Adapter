@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using TownSuite.Web.SSV3Facade;
+using TownSuite.Web.SSV3Adapter;
 
 namespace TownSuite.Web.Tests;
 

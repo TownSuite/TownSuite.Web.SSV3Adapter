@@ -21,7 +21,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\TownSuite.Web.SSV3Facade\TownSuite.Web.SSV3Facade.csproj"/>
+        <ProjectReference Include="..\TownSuite.Web.SSV3Adapter\TownSuite.Web.SSV3Adapter.csproj"/>
         <ProjectReference Include="..\TownSuite.Web.Example\TownSuite.Web.Example.csproj"/>
     </ItemGroup>
 </Project>

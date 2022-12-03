@@ -8,9 +8,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["TownSuite.Web.Example/TownSuite.Web.Example.csproj", "TownSuite.Web.Example/"]
-COPY ["TownSuite.Web.SSV3Facade/TownSuite.Web.SSV3Facade.csproj", "TownSuite.Web.SSV3Facade/"]
-COPY ["TownSuite.Web.SSV3Facade.Interfaces/TownSuite.Web.SSV3Facade.Interfaces.csproj", "TownSuite.Web.SSV3Facade.Interfaces/"]
-COPY ["TownSuite.Web.SSV3Facade.Prometheus/TownSuite.Web.SSV3Facade.Prometheus.csproj", "TownSuite.Web.SSV3Facade.Prometheus/"]
+COPY ["TownSuite.Web.SSV3Adapter/TownSuite.Web.SSV3Adpater.csproj", "TownSuite.Web.SSV3Adapter/"]
+COPY ["TownSuite.Web.SSV3Adapter.Interfaces/TownSuite.Web.SSV3Adapter.Interfaces.csproj", "TownSuite.Web.SSV3Adapter.Interfaces/"]
+COPY ["TownSuite.Web.SSV3Adapter.Prometheus/TownSuite.Web.SSV3Adapter.Prometheus.csproj", "TownSuite.Web.SSV3Adapter.Prometheus/"]
 RUN dotnet restore "TownSuite.Web.Example/TownSuite.Web.Example.csproj"
 COPY . .
 WORKDIR "/src/TownSuite.Web.Example"

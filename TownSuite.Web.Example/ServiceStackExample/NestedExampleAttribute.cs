@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using TownSuite.Web.SSV3Facade.Interfaces;
+using TownSuite.Web.SSV3Adapter.Interfaces;
 
 namespace TownSuite.Web.Example.ServiceStackExample;
 

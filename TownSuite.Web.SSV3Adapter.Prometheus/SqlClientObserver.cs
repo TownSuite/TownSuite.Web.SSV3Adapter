@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.DiagnosticAdapter;
 using Prometheus;
 
-namespace TownSuite.Web.SSV3Facade.Prometheus;
+namespace TownSuite.Web.SSV3Adapter.Prometheus;
 
 // https://bartwullems.blogspot.com/2021/01/using-systemdiagnosticdiagnosticsource_6.html
 // https://bartwullems.blogspot.com/2021/01/using-systemdiagnosticdiagnosticsource.html

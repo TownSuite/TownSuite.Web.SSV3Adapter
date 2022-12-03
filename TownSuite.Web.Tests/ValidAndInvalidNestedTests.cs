@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using TownSuite.Web.Example.ServiceStackExample;
-using TownSuite.Web.SSV3Facade;
+using TownSuite.Web.SSV3Adapter;
 
 namespace TownSuite.Web.Tests;
 
@@ -23,8 +23,8 @@ public class ValidAndInvalidNestedTests
         });
 
 
-        var facade = new ServiceStackFacade(options, serviceProvider);
-        var results = await facade.Post(path, value, "any");
+        var adapter = new ServiceStackAdapter(options, serviceProvider);
+        var results = await adapter.Post(path, value, "any");
 
         Assert.That(results.json, Is.EqualTo("{\"Output\":\"All good\"}"));
         Assert.That(results.statusCode == 200);
@@ -45,8 +45,8 @@ public class ValidAndInvalidNestedTests
         });
 
 
-        var facade = new ServiceStackFacade(options, serviceProvider);
-        var results = await facade.Post(path, value, "any");
+        var adapter = new ServiceStackAdapter(options, serviceProvider);
+        var results = await adapter.Post(path, value, "any");
 
         Assert.That(results.json, Is.EqualTo(null));
         Assert.That(results.statusCode == 400);

@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <AssemblyTitle>TownSuite.Web.SSV3Adapter.Prometheus</AssemblyTitle>
+        <Company>TownSuite Municipal Software Inc.</Company>
+        <Product>SSV3 Prometheus Implementation</Product>
+        <Description>Optional prometheus metrics implementation.</Description>
+        <Copyright>TownSuite Muncipal Software Inc. 2021</Copyright>
+        <Deterministic>true</Deterministic>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <Version>1.0.9</Version>
+        <AssemblyVersion>1.0.9</AssemblyVersion>
+        <FileVersion>1.0.9</FileVersion>
+
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="prometheus-net.AspNetCore"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="prometheus-net.AspNetCore" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="3.1.30"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\TownSuite.Web.SSV3Adapter.Interfaces\TownSuite.Web.SSV3Adapter.Interfaces.csproj"/>
+    </ItemGroup>
+</Project>

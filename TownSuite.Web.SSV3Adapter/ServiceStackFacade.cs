@@ -3,20 +3,20 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using TownSuite.Web.SSV3Facade.Interfaces;
+using TownSuite.Web.SSV3Adapter.Interfaces;
 
 [assembly: InternalsVisibleTo("TownSuite.Web.Tests")]
 
-namespace TownSuite.Web.SSV3Facade;
+namespace TownSuite.Web.SSV3Adapter;
 
-internal class ServiceStackFacade
+internal class ServiceStackAdapter
 {
-    private readonly ServiceStackV3FacadeOptions _options;
+    private readonly ServiceStackV3AdapterOptions _options;
     private readonly ISSV3Prometheus? _prom;
     private readonly IServiceProvider _serviceProvider;
     private readonly SsHelper _ssHelper;
 
-    public ServiceStackFacade(ServiceStackV3FacadeOptions options,
+    public ServiceStackAdapter(ServiceStackV3AdapterOptions options,
         IServiceProvider serviceProvider,
         ISSV3Prometheus? prom = null)
     {

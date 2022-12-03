@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TownSuite.Web.SSV3Facade;
+namespace TownSuite.Web.SSV3Adapter;
 
 public class RootInfo
 {

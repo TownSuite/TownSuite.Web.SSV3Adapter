@@ -3,13 +3,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Newtonsoft.Json;
 
-namespace TownSuite.Web.SSV3Facade;
+namespace TownSuite.Web.SSV3Adapter;
 
 internal class Swagger
 {
     private static string? jsonCached;
     private readonly string _description;
-    private readonly ServiceStackV3FacadeOptions _options;
+    private readonly ServiceStackV3AdapterOptions _options;
     private readonly SsHelper _ssHelper;
     private readonly string _title;
     private readonly string _version;
@@ -23,7 +23,7 @@ internal class Swagger
 
     private Type type;
 
-    public Swagger(ServiceStackV3FacadeOptions options,
+    public Swagger(ServiceStackV3AdapterOptions options,
         IServiceProvider serviceProvider, string description,
         string title, string version)
     {

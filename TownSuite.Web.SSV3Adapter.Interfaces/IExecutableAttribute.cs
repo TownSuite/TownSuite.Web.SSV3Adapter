@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace TownSuite.Web.SSV3Facade.Interfaces;
+namespace TownSuite.Web.SSV3Adapter.Interfaces;
 
 public interface IExecutableAttribute
 {
