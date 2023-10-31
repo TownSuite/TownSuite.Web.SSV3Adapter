@@ -14,7 +14,8 @@ internal static class Settings
         return new ServiceStackV3AdapterOptions(
             new[]
             {
-                typeof(BaseServiceExample)
+                typeof(BaseServiceExample),
+                typeof(InterfaceServiceExample)
             })
         {
             RoutePath = "/service/json/syncreply/{name}",

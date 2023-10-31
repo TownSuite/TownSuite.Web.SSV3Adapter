@@ -93,7 +93,8 @@ IDisposable subscription = DiagnosticListener.AllListeners.Subscribe(observer);
 app.UseServiceStackV3Adapter(new ServiceStackV3AdapterOptions(
         serviceTypes: new Type[]
         {
-            typeof(BaseServiceExample)
+            typeof(BaseServiceExample),
+            typeof(InterfaceServiceExample)
         })
     {
         RoutePath = "/example/service/json/syncreply/{name}",
@@ -150,7 +151,8 @@ app.UseServiceStackV3Adapter(new ServiceStackV3AdapterOptions(
 app.UseServiceStackV3AdapterSwagger(new ServiceStackV3AdapterOptions(
     serviceTypes: new Type[]
     {
-        typeof(BaseServiceExample)
+        typeof(BaseServiceExample),
+        typeof(InterfaceServiceExample)
     })
 {
     SwaggerPath = "/swag/swagger.json",
