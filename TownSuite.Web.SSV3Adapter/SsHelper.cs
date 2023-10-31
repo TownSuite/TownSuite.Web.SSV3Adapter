@@ -137,6 +137,8 @@ internal class SsHelper
             if (instance.BaseType == item)
                 return true;
             else if (instance.IsSubclassOf(item)) return true;
+            else if (instance.IsAssignableTo(item) && instance != item) 
+                return true;
         return false;
     }
 
