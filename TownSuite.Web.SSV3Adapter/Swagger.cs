@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 using Newtonsoft.Json;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Writers;
 
 namespace TownSuite.Web.SSV3Adapter;
 
@@ -16,8 +19,6 @@ internal class Swagger
     private AssemblyBuilder ab;
     private AssemblyName aName;
     private ModuleBuilder mb;
-
-    private RootInfo swagRoot;
     private TypeBuilder tb;
 
 
@@ -50,334 +51,166 @@ internal class Swagger
     {
         var serviceInfo = _ssHelper.GetAllServices();
 
-        swagRoot = new RootInfo
+        var swaggerDoc = new OpenApiDocument();
+        swaggerDoc.Info = new OpenApiInfo()
         {
-            Swagger = "2.0",
-            Info = new Info
-            {
-                Description = _description,
-                Title = _title,
-                Version = _version
-            },
-            Host = host,
-            BasePath = _options.RoutePath,
-            Schemes = new[] { "https" },
-            Paths = new SortedDictionary<string, object>(),
-            Definitions = new SortedDictionary<string, object>()
+            Title = "TownSuite.SSV3Adapter",
+            Version = "v1"
         };
+        swaggerDoc.Components = new OpenApiComponents();
+        swaggerDoc.Components.Schemas = new Dictionary<string, OpenApiSchema>();
+        swaggerDoc.Paths = new OpenApiPaths();
 
-        var expandoPath = swagRoot.Paths;
         foreach (var service in serviceInfo)
         {
-            var data = CanAddAttribute(service.Key.Name, service.Value.Service);
-
             var descriptionAttribute = await _ssHelper.GetAttributeAsync<DescriptionAttribute>(
                 service.Value.Service
             );
-
-            data.PostData = new Post
-            {
-                Description = descriptionAttribute?.Description ?? "",
-                Produces = new[] { "application/json" },
-                Responses = new Responses
-                {
-                    The200 = new The200
-                    {
-                        Description = "OK",
-                        Schema = new Schema
-                        {
-                            Type = "object",
-                            Properties = new Dictionary<string, object>()
-                        }
-                    }
-                },
-                Consumes = new[] { "application/json" },
-                Summary = "",
-                Parameters = new RequestBody2[]
-                {
-                    new RequestBody2()
-                    {
-                        In = "body",
-                        Description = descriptionAttribute?.Description ?? "",
-                        Name = service.Value.DtoType.Name,
-                        Schema = new Schema
-                        {
-                            Type = "object",
-                            Properties = new Dictionary<string, object>()
-                        }
-                    }
-                }
-            };
-
-            var requestExpandoBody = data.PostData.Parameters[0].Schema.Properties;
-            var responseExpandoBody = data.PostData.Responses.The200.Schema.Properties;
-
-
+            
+            var requestProp = service.Value.DtoType;
+            Type responseProp;
             var requestProperties = service.Value.DtoType.GetProperties();
             PropertyInfo[] responseProperties;
             if (SsHelper.IsAsyncMethod(service.Value.Method))
-                responseProperties = service.Value.Method.ReturnType
-                    .GetProperties().FirstOrDefault()
-                    .PropertyType.GetProperties();
+            {
+                responseProp = service.Value.Method.ReturnType
+                    .GetProperties().FirstOrDefault().PropertyType;
+                responseProperties = responseProp.GetProperties();
+            }
             else
-                responseProperties = service.Value.Method.ReturnType.GetProperties();
-
-            ExtractRequestBody(requestExpandoBody,
-                requestProperties, 0);
-            ExtractRequestBody(responseExpandoBody,
-                responseProperties, 0);
-
-            try
             {
-                if (!expandoPath.ContainsKey("/" + service.Value.DtoType.Name))
-                    expandoPath.Add("/" + service.Value.DtoType.Name, data);
-                else
-                    expandoPath.Add("/" + service.Value.DtoType.FullName, data);
-            }
-            catch (ArgumentException)
-            {
-            }
-        }
-
-
-        jsonCached = JsonConvert.SerializeObject(swagRoot);
-    }
-
-
-    private void ExtractRequestBody(IDictionary<string, object> expandoBody,
-        PropertyInfo[] requestProperties, int level)
-    {
-        //  Console.WriteLine(prop?.PropertyType?.ToString());
-        //  Console.WriteLine($"{prop?.Name}|{paramType}|{basetype}".PadLeft(level * 4, '.'));
-
-        //if (level > 5)
-        //{
-        //    Console.WriteLine("bad");
-        //}
-
-        foreach (var prop in requestProperties)
-        {
-            var paramType = prop?.PropertyType.Name.ToLower();
-            var basetype = prop?.PropertyType?.BaseType?.Name.ToLower();
-            var namespaceType = prop?.PropertyType?.Namespace?.ToLower();
-
-            switch (basetype)
-            {
-                case "enum":
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new
-                        {
-                            type = "string",
-                            @enum = Enum.GetNames(prop.PropertyType)
-                        }));
-                    continue;
+                responseProp = service.Value.Method.ReturnType;
+                responseProperties = responseProp.GetProperties();
             }
 
 
-            var isNullable = false;
-            if (paramType == "nullable`1")
+            var schema = new OpenApiSchema
             {
-                isNullable = true;
-                paramType = prop?.PropertyType?.GenericTypeArguments.FirstOrDefault().Name.ToLower();
+                Type = "object",
+                Properties = new Dictionary<string, OpenApiSchema>()
+            };
+            
+            var requestSchema = new OpenApiSchema
+            {
+                Type = "object",
+                Description = descriptionAttribute?.Description ?? "",
+                Properties = new Dictionary<string, OpenApiSchema>()
+            };
+
+            foreach (var prop in requestProperties)
+            {
+                requestSchema.Properties.Add(prop.Name, GetOpenApiSchema(prop.PropertyType));
+            }
+            
+            foreach (var prop in responseProperties)
+            {
+                schema.Properties.Add(prop.Name, GetOpenApiSchema(prop.PropertyType));
             }
 
+            // Add the schema to the Swagger document
+            string endpointName = requestProp.Name.ToLower();
+            string theNamespace = requestProp.Namespace;
+            string responseName = responseProp.Name.ToLower();
+            string responseNamespace = responseProp.Namespace;
 
-            switch (paramType)
+            swaggerDoc.Paths.Add($"{_options.RoutePath}/{endpointName}", new OpenApiPathItem()
             {
-                // nullable: true
-
-                case "byte[]":
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new Dictionary<string, string>
-                        {
-                            { "type", "string" },
-                            { "format", "binary" },
-                            { "x-nullable", isNullable.ToString().ToLower() }
-                        }
-                    ));
-                    break;
-                case "string[]":
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new Dictionary<string, string>
-                        {
-                            { "type", "array" },
-                            { "format", "string" },
-                            { "x-nullable", isNullable.ToString().ToLower() }
-                        }
-                    ));
-                    break;
-                case "datetime":
-                case "date":
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new Dictionary<string, string>
-                        {
-                            { "type", "string" },
-                            { "format", "datetime" },
-                            { "x-nullable", isNullable.ToString().ToLower() }
-                        }
-                    ));
-                    break;
-                case "guid":
-                case "char":
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new Dictionary<string, string>
-                        {
-                            { "type", "string" },
-                            { "format", "string" },
-                            { "x-nullable", isNullable.ToString().ToLower() }
-                        }
-                    ));
-                    break;
-                case "decimal":
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new Dictionary<string, string>
-                        {
-                            { "type", "number" },
-                            { "format", "double" },
-                            { "x-nullable", isNullable.ToString().ToLower() }
-                        }
-                    ));
-                    break;
-                case "int32":
-                case "int64":
-                case "double":
-                case "float":
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new Dictionary<string, string>
-                        {
-                            { "type", "number" },
-                            { "format", paramType },
-                            { "x-nullable", isNullable.ToString().ToLower() }
-                        }));
-                    break;
-                case "reporttype":
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new
-                        {
-                            type = "string",
-                            @enum = Enum.GetNames(prop.PropertyType)
-                        }));
-                    break;
-                case "taskfactory`1":
-                    return;
-                case "ilist`1":
-                case "icollection`1":
-                case "ienumerable`1":
-                case "list`1":
-
-                    if (string.Equals(prop.DeclaringType.FullName,
-                            prop.PropertyType.GenericTypeArguments.FirstOrDefault().FullName,
-                            StringComparison.InvariantCultureIgnoreCase)
-                        || prop.PropertyType.GenericTypeArguments.FirstOrDefault().FullName ==
-                        prop.ReflectedType.FullName
-                       )
-                        continue;
-
-
-                    var dict = new Dictionary<string, object>();
-                    var kvp = new KeyValuePair<string, object>(prop?.Name,
-                        new
-                        {
-                            type = "object",
-                            properties = dict
-                        });
-
-                    ExtractRequestBody(dict,
-                        prop.PropertyType.GenericTypeArguments.FirstOrDefault().GetProperties(),
-                        level + 1);
-                    AddIfNotPresent(expandoBody, kvp);
-                    break;
-
-                default:
-
-
-                    if (namespaceType.StartsWith("system"))
+                Operations = new Dictionary<OperationType, OpenApiOperation>()
+                {
+                    [OperationType.Post] = new OpenApiOperation()
                     {
-                        AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                            new
+                        RequestBody = new OpenApiRequestBody()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                type = paramType
-                            }));
-                        break;
-                    }
-
-
-                    var dict2 = new Dictionary<string, object>();
-                    var kvp2 = new KeyValuePair<string, object>(prop?.PropertyType?.Name,
-                        new
-                        {
-                            type = "object",
-                            properties = dict2
-                        });
-
-                    // Set a ref instead of inline definition.
-
-                    /*
-                     * 
-                      "address": {
-                          "$ref": "#/definitions/Address"
+                                ["application/json"] = new OpenApiMediaType()
+                                {
+                                    Schema = new OpenApiSchema()
+                                    {
+                                        Reference = new OpenApiReference()
+                                        {
+                                            Id = $"{theNamespace}.{endpointName}",
+                                            Type = ReferenceType.Schema
+                                        }
+                                    }
+                                }
+                            }
                         },
-                     * 
-                     */
-
-                    AddIfNotPresent(expandoBody, new KeyValuePair<string, object>(prop?.Name,
-                        new Dictionary<string, string>
+                        Responses = new OpenApiResponses()
                         {
-                            { "$ref", $"#/definitions/{prop?.PropertyType?.Name}" }
+                            ["200"] = new OpenApiResponse()
+                            {
+                                Description = "Success",
+                                Content = new Dictionary<string, OpenApiMediaType>()
+                                {
+                                    ["application/json"] = new OpenApiMediaType()
+                                    {
+                                        Schema = new OpenApiSchema()
+                                        {
+                                            Reference = new OpenApiReference()
+                                            {
+                                                Id = $"{responseNamespace}.{responseName}",
+                                                Type = ReferenceType.Schema
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    ));
-
-                    if (string.Equals(prop.PropertyType.FullName,
-                            prop.DeclaringType?.FullName))
-                    {
-                        AddIfNotPresent(swagRoot.Definitions, kvp2);
-                        continue;
                     }
-
-                    ExtractRequestBody(dict2,
-                        prop.PropertyType.GetProperties(),
-                        level + 1);
-                    if (!swagRoot.Definitions.ContainsKey(kvp2.Key)) AddIfNotPresent(swagRoot.Definitions, kvp2);
-
-                    break;
-            }
+                }
+            });
+            
+            swaggerDoc.Components.Schemas.Add($"{theNamespace}.{endpointName}",
+                requestSchema);
+            swaggerDoc.Components.Schemas.Add($"{responseNamespace}.{responseName}",
+                schema);
         }
+
+        var sb = new StringBuilder();
+        swaggerDoc.SerializeAsV3(new OpenApiJsonWriter(new StringWriter(sb)));
+        jsonCached = sb.ToString();
     }
 
-    private void AddIfNotPresent(IDictionary<string, object> expandoBody,
-        KeyValuePair<string, object> kvp)
+    private OpenApiSchema GetOpenApiSchema(Type type)
     {
-        if (expandoBody.ContainsKey(kvp.Key)) return;
+        if (type == typeof(string))
+        {
+            return new OpenApiSchema { Type = "string" };
+        }
 
-        expandoBody.Add(kvp);
-    }
+        if (type == typeof(int))
+        {
+            return new OpenApiSchema { Type = "integer" };
+        }
 
-    private ServiceEndPoint CanAddAttribute(string path, Type service)
-    {
-        // See https://stackoverflow.com/questions/14663763/how-to-add-an-attribute-to-a-property-at-runtime
+        if (type == typeof(bool))
+        {
+            return new OpenApiSchema { Type = "boolean" };
+        }
 
-        if (type == null) type = typeof(ServiceEndPoint);
+        if (type == typeof(DateTime))
+        {
+            return new OpenApiSchema { Type = "string" };
+        }
 
-        if (aName == null) aName = new AssemblyName(service.Assembly.FullName);
+        if (type == typeof(decimal) || type == typeof(double) || type == typeof(float))
+        {
+            return new OpenApiSchema { Type = "number" };
+        }
 
-        if (ab == null)
-            ab = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),
-                AssemblyBuilderAccess.Run);
+        // If the type is a custom object
+        var schema = new OpenApiSchema
+        {
+            Type = "object",
+            Properties = new Dictionary<string, OpenApiSchema>()
+        };
 
-        if (mb == null) mb = ab.DefineDynamicModule(aName.Name);
+        foreach (var prop in type.GetProperties())
+        {
+            schema.Properties.Add(prop.Name, GetOpenApiSchema(prop.PropertyType));
+        }
 
-        if (tb == null)
-            tb = mb.DefineType(type.Name + "Proxy",
-                TypeAttributes.Public, type);
-
-        var attrCtorParams = new[] { typeof(string) };
-        var attrCtorInfo = typeof(JsonPropertyAttribute).GetConstructor(attrCtorParams);
-        var attrBuilder = new CustomAttributeBuilder(attrCtorInfo, new object[] { path });
-        tb.SetCustomAttribute(attrBuilder);
-
-        var newType = tb.CreateType();
-        var instance = Activator.CreateInstance(newType) as ServiceEndPoint;
-
-        return instance;
+        return schema;
     }
 }
