@@ -115,9 +115,9 @@ internal class Swagger
             }
 
             // Add the schema to the Swagger document
-            string endpointName = requestProp.Name.ToLower();
+            string endpointName = requestProp.Name;
             string theNamespace = requestProp.Namespace;
-            string responseName = responseProp.Name.ToLower();
+            string responseName = responseProp.Name;
             string responseNamespace = responseProp.Namespace;
 
             if (!swaggerDoc.Paths.ContainsKey($"{_options.RoutePath}/{endpointName}"))
