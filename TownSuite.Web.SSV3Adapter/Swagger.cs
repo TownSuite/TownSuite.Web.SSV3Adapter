@@ -61,9 +61,10 @@ internal class Swagger
         swaggerDoc.Components.Schemas = new Dictionary<string, OpenApiSchema>();
         swaggerDoc.Paths = new OpenApiPaths();
 
-        HashSet<Type> processedTypes = new HashSet<Type>();
+        
         foreach (var service in serviceInfo)
         {
+            HashSet<Type> processedTypes = new HashSet<Type>();
             var descriptionAttribute = await _ssHelper.GetAttributeAsync<DescriptionAttribute>(
                 service.Value.Service
             );
