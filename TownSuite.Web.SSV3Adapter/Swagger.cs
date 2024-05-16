@@ -61,12 +61,13 @@ internal class Swagger
         swaggerDoc.Components.Schemas = new Dictionary<string, OpenApiSchema>();
         swaggerDoc.Paths = new OpenApiPaths();
 
+        HashSet<Type> processedTypes = new HashSet<Type>();
         foreach (var service in serviceInfo)
         {
             var descriptionAttribute = await _ssHelper.GetAttributeAsync<DescriptionAttribute>(
                 service.Value.Service
             );
-            
+
             var requestProp = service.Value.DtoType;
             Type responseProp;
             var requestProperties = service.Value.DtoType.GetProperties();
@@ -82,14 +83,13 @@ internal class Swagger
                 responseProp = service.Value.Method.ReturnType;
                 responseProperties = responseProp.GetProperties();
             }
-
-
+            
             var schema = new OpenApiSchema
             {
                 Type = "object",
                 Properties = new Dictionary<string, OpenApiSchema>()
             };
-            
+
             var requestSchema = new OpenApiSchema
             {
                 Type = "object",
@@ -99,12 +99,19 @@ internal class Swagger
 
             foreach (var prop in requestProperties)
             {
-                requestSchema.Properties.Add(prop.Name, GetOpenApiSchema(prop.PropertyType));
+                var s = GetOpenApiSchema(prop.PropertyType, 0, processedTypes);
+                if (s != null && !requestSchema.Properties.ContainsKey(prop.Name))
+                {
+                    requestSchema.Properties.Add(prop.Name, s);
+                }
             }
-            
+
             foreach (var prop in responseProperties)
             {
-                schema.Properties.Add(prop.Name, GetOpenApiSchema(prop.PropertyType));
+                if (!schema.Properties.ContainsKey(prop.Name))
+                {
+                    schema.Properties.Add(prop.Name, GetOpenApiSchema(prop.PropertyType, 0, processedTypes));
+                }
             }
 
             // Add the schema to the Swagger document
@@ -113,34 +120,16 @@ internal class Swagger
             string responseName = responseProp.Name.ToLower();
             string responseNamespace = responseProp.Namespace;
 
-            swaggerDoc.Paths.Add($"{_options.RoutePath}/{endpointName}", new OpenApiPathItem()
+            if (!swaggerDoc.Paths.ContainsKey($"{_options.RoutePath}/{endpointName}"))
             {
-                Operations = new Dictionary<OperationType, OpenApiOperation>()
+                swaggerDoc.Paths.Add($"{_options.RoutePath}/{endpointName}", new OpenApiPathItem()
                 {
-                    [OperationType.Post] = new OpenApiOperation()
+                    Operations = new Dictionary<OperationType, OpenApiOperation>()
                     {
-                        RequestBody = new OpenApiRequestBody()
+                        [OperationType.Post] = new OpenApiOperation()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            RequestBody = new OpenApiRequestBody()
                             {
-                                ["application/json"] = new OpenApiMediaType()
-                                {
-                                    Schema = new OpenApiSchema()
-                                    {
-                                        Reference = new OpenApiReference()
-                                        {
-                                            Id = $"{theNamespace}.{endpointName}",
-                                            Type = ReferenceType.Schema
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        Responses = new OpenApiResponses()
-                        {
-                            ["200"] = new OpenApiResponse()
-                            {
-                                Description = "Success",
                                 Content = new Dictionary<string, OpenApiMediaType>()
                                 {
                                     ["application/json"] = new OpenApiMediaType()
@@ -149,8 +138,29 @@ internal class Swagger
                                         {
                                             Reference = new OpenApiReference()
                                             {
-                                                Id = $"{responseNamespace}.{responseName}",
+                                                Id = $"{theNamespace}.{endpointName}",
                                                 Type = ReferenceType.Schema
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            Responses = new OpenApiResponses()
+                            {
+                                ["200"] = new OpenApiResponse()
+                                {
+                                    Description = "Success",
+                                    Content = new Dictionary<string, OpenApiMediaType>()
+                                    {
+                                        ["application/json"] = new OpenApiMediaType()
+                                        {
+                                            Schema = new OpenApiSchema()
+                                            {
+                                                Reference = new OpenApiReference()
+                                                {
+                                                    Id = $"{responseNamespace}.{responseName}",
+                                                    Type = ReferenceType.Schema
+                                                }
                                             }
                                         }
                                     }
@@ -158,13 +168,20 @@ internal class Swagger
                             }
                         }
                     }
-                }
-            });
-            
-            swaggerDoc.Components.Schemas.Add($"{theNamespace}.{endpointName}",
-                requestSchema);
-            swaggerDoc.Components.Schemas.Add($"{responseNamespace}.{responseName}",
-                schema);
+                });
+            }
+
+            if (!swaggerDoc.Components.Schemas.ContainsKey($"{theNamespace}.{endpointName}"))
+            {
+                swaggerDoc.Components.Schemas.Add($"{theNamespace}.{endpointName}",
+                    requestSchema);
+            }
+
+            if (!swaggerDoc.Components.Schemas.ContainsKey($"{responseNamespace}.{responseName}"))
+            {
+                swaggerDoc.Components.Schemas.Add($"{responseNamespace}.{responseName}",
+                    schema);
+            }
         }
 
         var sb = new StringBuilder();
@@ -172,8 +189,18 @@ internal class Swagger
         jsonCached = sb.ToString();
     }
 
-    private OpenApiSchema GetOpenApiSchema(Type type)
+    private OpenApiSchema GetOpenApiSchema(Type type, int level, HashSet<Type> processedTypes)
     {
+        if (level > 10)
+        {
+            return new OpenApiSchema { Description = "Recursion limit reached" };
+        }
+
+        if (processedTypes.Contains(type))
+        {
+            return null;
+        }
+
         if (type == typeof(string))
         {
             return new OpenApiSchema { Type = "string" };
@@ -206,9 +233,17 @@ internal class Swagger
             Properties = new Dictionary<string, OpenApiSchema>()
         };
 
+        processedTypes.Add(type);
         foreach (var prop in type.GetProperties())
         {
-            schema.Properties.Add(prop.Name, GetOpenApiSchema(prop.PropertyType));
+            if (!schema.Properties.ContainsKey(prop.Name))
+            {
+                var s = GetOpenApiSchema(prop.PropertyType, level + 1, processedTypes);
+                if (s != null)
+                {
+                    schema.Properties.Add(prop.Name, s);
+                }
+            }
         }
 
         return schema;

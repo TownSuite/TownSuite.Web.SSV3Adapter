@@ -95,23 +95,53 @@ internal class SsHelper
     {
         if (SwaggerServiceMap.Any()) return SwaggerServiceMap;
 
-        foreach (var asm in _options.SearchAssemblies)
+        var types = PermissiveLoadAssemblies();
+        
+        var typeInfo = types.Where(p => IsServiceType(p)).OrderBy(p => p.Name);
+        foreach (var service in typeInfo)
         {
-            var typeInfo = asm.GetTypes().Where(p => IsServiceType(p)).OrderBy(p => p.Name);
-            foreach (var service in typeInfo)
-            {
-                var methodInfo = GetMethod("", service);
-                if (methodInfo.method != null)
-                    // key, value, func<TKey, TValue, TValue>
-                    SwaggerServiceMap.AddOrUpdate(methodInfo.method.DeclaringType,
-                        (service, methodInfo.method, methodInfo.dtoType),
-                        (s, m) => { return (service, methodInfo.method, methodInfo.dtoType); });
-            }
-
-            // continue on and try the next dll
+            var methodInfo = GetMethod("", service);
+            if (methodInfo.method != null)
+                // key, value, func<TKey, TValue, TValue>
+                SwaggerServiceMap.AddOrUpdate(methodInfo.method.DeclaringType,
+                    (service, methodInfo.method, methodInfo.dtoType),
+                    (s, m) => { return (service, methodInfo.method, methodInfo.dtoType); });
         }
 
+        // continue on and try the next dll
         return SwaggerServiceMap;
+    }
+
+    private List<Type> PermissiveLoadAssemblies()
+    {
+        List<Type> types = new List<Type>();
+
+        int assemblyCount = _options.SearchAssemblies.Length;
+
+        for (int i = 0; i < assemblyCount; i++)
+        {
+            try
+            {
+                types.AddRange(_options.SearchAssemblies[i].GetTypes());
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                // Handle assemblies that cannot load all types
+                foreach (Type theType in ex.Types)
+                {
+                    try
+                    {
+                        types.Add(theType);
+                    }
+                    catch (Exception)
+                    {
+                        // Type not in this assembly - reference to elsewhere ignored
+                    }
+                }
+            }
+        }
+
+        return types;
     }
 
 
@@ -134,11 +164,17 @@ internal class SsHelper
     public bool IsServiceType(Type instance)
     {
         foreach (var item in _options.ServiceTypes)
+        {
+            if (instance == null)
+                continue;
             if (instance.BaseType == item)
                 return true;
-            else if (instance.IsSubclassOf(item)) return true;
-            else if (instance.IsAssignableTo(item) && instance != item) 
+            else if (instance.IsSubclassOf(item))
                 return true;
+            else if (instance.IsAssignableTo(item) && instance != item)
+                return true;
+        }
+
         return false;
     }
 
