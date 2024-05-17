@@ -12,9 +12,9 @@
         <Copyright>TownSuite Muncipal Software Inc. 2021</Copyright>
         <Deterministic>true</Deterministic>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>1.0.18</Version>
-        <AssemblyVersion>1.0.18</AssemblyVersion>
-        <FileVersion>1.0.18</FileVersion>
+        <Version>1.0.19</Version>
+        <AssemblyVersion>1.0.19</AssemblyVersion>
+        <FileVersion>1.0.19</FileVersion>
 
         <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
