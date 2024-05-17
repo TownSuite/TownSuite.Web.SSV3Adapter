@@ -18,22 +18,22 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore TownSuite.Web.SSV3Facade.sln
+      run: dotnet restore TownSuite.Web.SSV3Adapter.sln
     - name: Build
-      run: dotnet build -c Release TownSuite.Web.SSV3Facade.sln --no-restore
+      run: dotnet build -c Release TownSuite.Web.SSV3Adapter.sln --no-restore
     - name: Test
-      run: dotnet test TownSuite.Web.SSV3Facade.sln --verbosity normal
+      run: dotnet test TownSuite.Web.SSV3Adapter.sln --verbosity normal
     - name: Archive artifacts
       uses: actions/upload-artifact@v3
       with:
         name: nuget-packages
         path: |
-          TownSuite.Web.SSV3Facade.Interfaces/bin/Release/*.nupkg
-          TownSuite.Web.SSV3Facade.Prometheus/bin/Release/*.nupkg
-          TownSuite.Web.SSV3Facade/bin/Release/*.nupkg
+          TownSuite.Web.SSV3Adapter.Interfaces/bin/Release/*.nupkg
+          TownSuite.Web.SSV3Adapter.Prometheus/bin/Release/*.nupkg
+          TownSuite.Web.SSV3Adapter/bin/Release/*.nupkg
         retention-days: 1
     - name: Generate XML SBOM
       uses: CycloneDX/gh-dotnet-generate-sbom@v1
       with:
-        path: ./TownSuite.Web.SSV3Facade.sln
+        path: ./TownSuite.Web.SSV3Adapter.sln
   
