@@ -8,23 +8,28 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore TownSuite.Web.SSV3Adapter.sln
     - name: Build
       run: dotnet build -c Release TownSuite.Web.SSV3Adapter.sln --no-restore
-    - name: Test
-      run: dotnet test TownSuite.Web.SSV3Adapter.sln --verbosity normal
+    - name: Tests
+      run: dotnet test -c Release TownSuite.Web.SSV3Adapter.sln --verbosity normal --collect:"XPlat Code Coverage" --logger:"trx"
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: Unit Tests 
+          path: "**/TestResults/*.trx"
+          reporter: dotnet-trx
     - name: Archive artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: nuget-packages
         path: |
@@ -32,7 +37,7 @@ jobs:
           TownSuite.Web.SSV3Adapter.Prometheus/bin/Release/*.nupkg
           TownSuite.Web.SSV3Adapter/bin/Release/*.nupkg
         retention-days: 1
-    - name: Generate XML SBOM
+    - name: SBOM
       uses: CycloneDX/gh-dotnet-generate-sbom@v1
       with:
         path: ./TownSuite.Web.SSV3Adapter.sln
