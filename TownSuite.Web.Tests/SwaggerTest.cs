@@ -16,7 +16,6 @@ public class SwaggerTest
             "description", "title", "1.1.1");
         var results = await swag.Generate("localhost");
         
-        Console.WriteLine(results.json);
         Assert.That(results.json,
             Is.EqualTo(
                 @"{
