@@ -21,13 +21,6 @@ jobs:
         run: dotnet build -c Release TownSuite.Web.SSV3Adapter.sln --no-restore
       - name: Tests
         run: dotnet test -c Release TownSuite.Web.SSV3Adapter.sln --verbosity normal --collect:"XPlat Code Coverage" --logger:"trx" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile='**/TownSuite.Web.Example/*.cs'
-      - name: Upload Code Coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-artifacts
-          path: |
-            **/TestResults/**/coverage.cobertura.xml
-          retention-days: 1
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure() # run this step even if previous step failed
@@ -35,26 +28,6 @@ jobs:
           name: unit tests
           path: "**/TestResults/*.trx"
           reporter: dotnet-trx
-      - name: Archive nuget artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-packages
-          path: |
-            TownSuite.Web.SSV3Adapter.Interfaces/bin/Release/*.nupkg
-            TownSuite.Web.SSV3Adapter.Prometheus/bin/Release/*.nupkg
-            TownSuite.Web.SSV3Adapter/bin/Release/*.nupkg
-          retention-days: 1
-      - name: SBOM
-        uses: CycloneDX/gh-dotnet-generate-sbom@v1
-        with:
-          path: ./TownSuite.Web.SSV3Adapter.sln
-  code-coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: code-coverage-artifacts
-          path: code-coverage-artifacts
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
@@ -67,9 +40,24 @@ jobs:
           indicators: true
           output: both
           thresholds: "60 80"
+      - name: Write Code Coverage to Job Summary
+        run: cat **code-coverage-results.md** >> $GITHUB_STEP_SUMMARY
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'
         with:
           recreate: true
           path: code-coverage-results.md
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: |
+            TownSuite.Web.SSV3Adapter.Interfaces/bin/Release/*.nupkg
+            TownSuite.Web.SSV3Adapter.Prometheus/bin/Release/*.nupkg
+            TownSuite.Web.SSV3Adapter/bin/Release/*.nupkg
+          retention-days: 1
+      - name: SBOM
+        uses: CycloneDX/gh-dotnet-generate-sbom@v1
+        with:
+          path: ./TownSuite.Web.SSV3Adapter.sln
