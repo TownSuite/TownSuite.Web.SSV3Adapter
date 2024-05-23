@@ -20,7 +20,7 @@ jobs:
       - name: Build
         run: dotnet build -c Release TownSuite.Web.SSV3Adapter.sln --no-restore
       - name: Test
-        run: dotnet test -c Release TownSuite.Web.SSV3Adapter.sln --verbosity normal --collect:"XPlat Code Coverage" --logger:"trx" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile='**/TownSuite.Web.Example/*.cs'
+        run: dotnet test -c Release TownSuite.Web.SSV3Adapter.sln --verbosity normal --collect:"XPlat Code Coverage" --logger:"trx" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile='**/TownSuite.Web.Example/**/*.cs'
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure() # run this step even if previous step failed
