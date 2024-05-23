@@ -1,7 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Newtonsoft.Json;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
@@ -51,7 +53,9 @@ internal class Swagger
     private async Task PreGenerateJson(string host)
     {
         var serviceInfo = _ssHelper.GetAllServices();
-
+        var sortedServiceInfo =
+            serviceInfo.ToImmutableSortedDictionary(t => t.Key.Name, t => t.Value);
+        
         var swaggerDoc = new OpenApiDocument();
         swaggerDoc.Info = new OpenApiInfo()
         {
@@ -59,12 +63,12 @@ internal class Swagger
             Version = "v1"
         };
         swaggerDoc.Components = new OpenApiComponents();
-        swaggerDoc.Components.Schemas = new Dictionary<string, OpenApiSchema>();
+        swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>();
         swaggerDoc.Paths = new OpenApiPaths();
-
-
-        foreach (var service in serviceInfo)
+        
+        foreach (var service in sortedServiceInfo)
         {
+            //  var service = serviceInfo[key];
             var descriptionAttribute = await _ssHelper.GetAttributeAsync<DescriptionAttribute>(
                 service.Value.Service
             );
@@ -89,13 +93,13 @@ internal class Swagger
             {
                 Type = "object",
                 Description = descriptionAttribute?.Description ?? "",
-                Properties = new Dictionary<string, OpenApiSchema>()
+                Properties = new SortedDictionary<string, OpenApiSchema>()
             };
 
             var responseSchema = new OpenApiSchema
             {
                 Type = "object",
-                Properties = new Dictionary<string, OpenApiSchema>()
+                Properties = new SortedDictionary<string, OpenApiSchema>()
             };
 
             foreach (var prop in requestProperties)
@@ -131,13 +135,13 @@ internal class Swagger
             {
                 swaggerDoc.Paths.Add($"{_options.RoutePath}/{endpointName}", new OpenApiPathItem()
                 {
-                    Operations = new Dictionary<OperationType, OpenApiOperation>()
+                    Operations = new SortedDictionary<OperationType, OpenApiOperation>()
                     {
                         [OperationType.Post] = new OpenApiOperation()
                         {
                             RequestBody = new OpenApiRequestBody()
                             {
-                                Content = new Dictionary<string, OpenApiMediaType>()
+                                Content = new SortedDictionary<string, OpenApiMediaType>()
                                 {
                                     ["application/json"] = new OpenApiMediaType()
                                     {
@@ -153,7 +157,7 @@ internal class Swagger
                                 ["200"] = new OpenApiResponse()
                                 {
                                     Description = "Success",
-                                    Content = new Dictionary<string, OpenApiMediaType>()
+                                    Content = new SortedDictionary<string, OpenApiMediaType>()
                                     {
                                         ["application/json"] = new OpenApiMediaType()
                                         {
@@ -240,7 +244,7 @@ internal class Swagger
         {
             return "object";
         }
-        
+
         return null;
     }
 
@@ -327,7 +331,7 @@ internal class Swagger
         var schema = new OpenApiSchema
         {
             Type = "object",
-            Properties = new Dictionary<string, OpenApiSchema>(),
+            Properties = new SortedDictionary<string, OpenApiSchema>(),
             Reference = new OpenApiReference()
             {
                 Id = $"{type.Namespace}.{type.Name}",

@@ -16,6 +16,7 @@ public class SwaggerTest
             "description", "title", "1.1.1");
         var results = await swag.Generate("localhost");
         
+        Console.WriteLine(results.json);
         Assert.That(results.json,
             Is.EqualTo(
                 @"{
@@ -25,153 +26,6 @@ public class SwaggerTest
     ""version"": ""v1""
   },
   ""paths"": {
-    ""/service/json/syncreply/{name}/Example3"": {
-      ""post"": {
-        ""requestBody"": {
-          ""content"": {
-            ""application/json"": {
-              ""schema"": {
-                ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.Example3""
-              }
-            }
-          }
-        },
-        ""responses"": {
-          ""200"": {
-            ""description"": ""Success"",
-            ""content"": {
-              ""application/json"": {
-                ""schema"": {
-                  ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.Example3Response""
-                }
-              }
-            }
-          },
-          ""299"": {
-            ""description"": ""Partial Success""
-          },
-          ""400"": {
-            ""description"": ""Bad Request""
-          },
-          ""401"": {
-            ""description"": ""Unauthorized""
-          },
-          ""403"": {
-            ""description"": ""Forbidden""
-          },
-          ""429"": {
-            ""description"": ""Too Many Requests""
-          },
-          ""500"": {
-            ""description"": ""Internal Server Error""
-          },
-          ""502"": {
-            ""description"": ""Bad Gateway""
-          },
-          ""504"": {
-            ""description"": ""Gateway Timeout""
-          }
-        }
-      }
-    },
-    ""/service/json/syncreply/{name}/Example"": {
-      ""post"": {
-        ""requestBody"": {
-          ""content"": {
-            ""application/json"": {
-              ""schema"": {
-                ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.Example""
-              }
-            }
-          }
-        },
-        ""responses"": {
-          ""200"": {
-            ""description"": ""Success"",
-            ""content"": {
-              ""application/json"": {
-                ""schema"": {
-                  ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ExampleResponse""
-                }
-              }
-            }
-          },
-          ""299"": {
-            ""description"": ""Partial Success""
-          },
-          ""400"": {
-            ""description"": ""Bad Request""
-          },
-          ""401"": {
-            ""description"": ""Unauthorized""
-          },
-          ""403"": {
-            ""description"": ""Forbidden""
-          },
-          ""429"": {
-            ""description"": ""Too Many Requests""
-          },
-          ""500"": {
-            ""description"": ""Internal Server Error""
-          },
-          ""502"": {
-            ""description"": ""Bad Gateway""
-          },
-          ""504"": {
-            ""description"": ""Gateway Timeout""
-          }
-        }
-      }
-    },
-    ""/service/json/syncreply/{name}/ValidNestedExample"": {
-      ""post"": {
-        ""requestBody"": {
-          ""content"": {
-            ""application/json"": {
-              ""schema"": {
-                ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ValidNestedExample""
-              }
-            }
-          }
-        },
-        ""responses"": {
-          ""200"": {
-            ""description"": ""Success"",
-            ""content"": {
-              ""application/json"": {
-                ""schema"": {
-                  ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ValidNestedExampleResponse""
-                }
-              }
-            }
-          },
-          ""299"": {
-            ""description"": ""Partial Success""
-          },
-          ""400"": {
-            ""description"": ""Bad Request""
-          },
-          ""401"": {
-            ""description"": ""Unauthorized""
-          },
-          ""403"": {
-            ""description"": ""Forbidden""
-          },
-          ""429"": {
-            ""description"": ""Too Many Requests""
-          },
-          ""500"": {
-            ""description"": ""Internal Server Error""
-          },
-          ""502"": {
-            ""description"": ""Bad Gateway""
-          },
-          ""504"": {
-            ""description"": ""Gateway Timeout""
-          }
-        }
-      }
-    },
     ""/service/json/syncreply/{name}/Example2"": {
       ""post"": {
         ""requestBody"": {
@@ -270,6 +124,104 @@ public class SwaggerTest
         }
       }
     },
+    ""/service/json/syncreply/{name}/Example"": {
+      ""post"": {
+        ""requestBody"": {
+          ""content"": {
+            ""application/json"": {
+              ""schema"": {
+                ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.Example""
+              }
+            }
+          }
+        },
+        ""responses"": {
+          ""200"": {
+            ""description"": ""Success"",
+            ""content"": {
+              ""application/json"": {
+                ""schema"": {
+                  ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ExampleResponse""
+                }
+              }
+            }
+          },
+          ""299"": {
+            ""description"": ""Partial Success""
+          },
+          ""400"": {
+            ""description"": ""Bad Request""
+          },
+          ""401"": {
+            ""description"": ""Unauthorized""
+          },
+          ""403"": {
+            ""description"": ""Forbidden""
+          },
+          ""429"": {
+            ""description"": ""Too Many Requests""
+          },
+          ""500"": {
+            ""description"": ""Internal Server Error""
+          },
+          ""502"": {
+            ""description"": ""Bad Gateway""
+          },
+          ""504"": {
+            ""description"": ""Gateway Timeout""
+          }
+        }
+      }
+    },
+    ""/service/json/syncreply/{name}/Example3"": {
+      ""post"": {
+        ""requestBody"": {
+          ""content"": {
+            ""application/json"": {
+              ""schema"": {
+                ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.Example3""
+              }
+            }
+          }
+        },
+        ""responses"": {
+          ""200"": {
+            ""description"": ""Success"",
+            ""content"": {
+              ""application/json"": {
+                ""schema"": {
+                  ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.Example3Response""
+                }
+              }
+            }
+          },
+          ""299"": {
+            ""description"": ""Partial Success""
+          },
+          ""400"": {
+            ""description"": ""Bad Request""
+          },
+          ""401"": {
+            ""description"": ""Unauthorized""
+          },
+          ""403"": {
+            ""description"": ""Forbidden""
+          },
+          ""429"": {
+            ""description"": ""Too Many Requests""
+          },
+          ""500"": {
+            ""description"": ""Internal Server Error""
+          },
+          ""502"": {
+            ""description"": ""Bad Gateway""
+          },
+          ""504"": {
+            ""description"": ""Gateway Timeout""
+          }
+        }
+      }
+    },
     ""/service/json/syncreply/{name}/InterfaceEndpointExample"": {
       ""post"": {
         ""requestBody"": {
@@ -318,52 +270,59 @@ public class SwaggerTest
           }
         }
       }
+    },
+    ""/service/json/syncreply/{name}/ValidNestedExample"": {
+      ""post"": {
+        ""requestBody"": {
+          ""content"": {
+            ""application/json"": {
+              ""schema"": {
+                ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ValidNestedExample""
+              }
+            }
+          }
+        },
+        ""responses"": {
+          ""200"": {
+            ""description"": ""Success"",
+            ""content"": {
+              ""application/json"": {
+                ""schema"": {
+                  ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ValidNestedExampleResponse""
+                }
+              }
+            }
+          },
+          ""299"": {
+            ""description"": ""Partial Success""
+          },
+          ""400"": {
+            ""description"": ""Bad Request""
+          },
+          ""401"": {
+            ""description"": ""Unauthorized""
+          },
+          ""403"": {
+            ""description"": ""Forbidden""
+          },
+          ""429"": {
+            ""description"": ""Too Many Requests""
+          },
+          ""500"": {
+            ""description"": ""Internal Server Error""
+          },
+          ""502"": {
+            ""description"": ""Bad Gateway""
+          },
+          ""504"": {
+            ""description"": ""Gateway Timeout""
+          }
+        }
+      }
     }
   },
   ""components"": {
     ""schemas"": {
-      ""TownSuite.Web.Example.ServiceStackExample.Example3"": {
-        ""type"": ""object"",
-        ""description"": """"
-      },
-      ""TownSuite.Web.Example.ServiceStackExample.Example3Response"": {
-        ""type"": ""object"",
-        ""properties"": {
-          ""FirstName"": {
-            ""type"": ""string""
-          },
-          ""LastName"": {
-            ""type"": ""string""
-          }
-        }
-      },
-      ""TownSuite.Web.Example.ServiceStackExample.Example"": {
-        ""type"": ""object"",
-        ""description"": """"
-      },
-      ""TownSuite.Web.Example.ServiceStackExample.ExampleResponse"": {
-        ""type"": ""object"",
-        ""properties"": {
-          ""FirstName"": {
-            ""type"": ""string""
-          },
-          ""LastName"": {
-            ""type"": ""string""
-          }
-        }
-      },
-      ""TownSuite.Web.Example.ServiceStackExample.ValidNestedExample"": {
-        ""type"": ""object"",
-        ""properties"": {
-          ""Input"": {
-            ""type"": ""string""
-          }
-        },
-        ""description"": """"
-      },
-      ""TownSuite.Web.Example.ServiceStackExample.ValidNestedExampleResponse"": {
-        ""type"": ""object""
-      },
       ""TownSuite.Web.Example.ServiceStackExample.ComplexModel"": {
         ""type"": ""object"",
         ""properties"": {
@@ -372,17 +331,21 @@ public class SwaggerTest
           }
         }
       },
+      ""TownSuite.Web.Example.ServiceStackExample.Example"": {
+        ""type"": ""object"",
+        ""description"": """"
+      },
       ""TownSuite.Web.Example.ServiceStackExample.Example2"": {
         ""type"": ""object"",
         ""properties"": {
+          ""Model"": {
+            ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ComplexModel""
+          },
           ""Number1"": {
             ""type"": ""number""
           },
           ""Number2"": {
             ""type"": ""number""
-          },
-          ""Model"": {
-            ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ComplexModel""
           }
         },
         ""description"": """"
@@ -401,17 +364,32 @@ public class SwaggerTest
           }
         }
       },
+      ""TownSuite.Web.Example.ServiceStackExample.Example3"": {
+        ""type"": ""object"",
+        ""description"": """"
+      },
+      ""TownSuite.Web.Example.ServiceStackExample.Example3Response"": {
+        ""type"": ""object"",
+        ""properties"": {
+          ""FirstName"": {
+            ""type"": ""string""
+          },
+          ""LastName"": {
+            ""type"": ""string""
+          }
+        }
+      },
       ""TownSuite.Web.Example.ServiceStackExample.ExampleDataProfiling"": {
         ""type"": ""object"",
         ""properties"": {
+          ""Model"": {
+            ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ComplexModel""
+          },
           ""Number1"": {
             ""type"": ""number""
           },
           ""Number2"": {
             ""type"": ""number""
-          },
-          ""Model"": {
-            ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ComplexModel""
           }
         },
         ""description"": """"
@@ -427,9 +405,32 @@ public class SwaggerTest
           }
         }
       },
+      ""TownSuite.Web.Example.ServiceStackExample.ExampleResponse"": {
+        ""type"": ""object"",
+        ""properties"": {
+          ""FirstName"": {
+            ""type"": ""string""
+          },
+          ""LastName"": {
+            ""type"": ""string""
+          }
+        }
+      },
       ""TownSuite.Web.Example.ServiceStackExample.InterfaceEndpointExample"": {
         ""type"": ""object"",
         ""description"": """"
+      },
+      ""TownSuite.Web.Example.ServiceStackExample.ValidNestedExample"": {
+        ""type"": ""object"",
+        ""properties"": {
+          ""Input"": {
+            ""type"": ""string""
+          }
+        },
+        ""description"": """"
+      },
+      ""TownSuite.Web.Example.ServiceStackExample.ValidNestedExampleResponse"": {
+        ""type"": ""object""
       }
     }
   }
