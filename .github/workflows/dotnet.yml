@@ -19,7 +19,7 @@ jobs:
         run: dotnet restore TownSuite.Web.SSV3Adapter.sln
       - name: Build
         run: dotnet build -c Release TownSuite.Web.SSV3Adapter.sln --no-restore
-      - name: Tests
+      - name: Test
         run: dotnet test -c Release TownSuite.Web.SSV3Adapter.sln --verbosity normal --collect:"XPlat Code Coverage" --logger:"trx" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile='**/TownSuite.Web.Example/*.cs'
       - name: Test Report
         uses: dorny/test-reporter@v1
