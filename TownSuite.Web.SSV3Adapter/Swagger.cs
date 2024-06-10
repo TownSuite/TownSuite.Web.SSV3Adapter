@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
@@ -53,14 +54,35 @@ internal class Swagger
     private async Task PreGenerateJson(string host)
     {
         var serviceInfo = _ssHelper.GetAllServices();
-        var sortedServiceInfo =
-            serviceInfo.ToImmutableSortedDictionary(t => t.Key.Name, t => t.Value);
+    //    var sortedServiceInfo =
+    //        serviceInfo.ToImmutableSortedDictionary(t => t.Key.Name, t => t.Value);
         
+    // Create a new empty ImmutableSortedDictionary
+    var sortedServiceInfo = ImmutableSortedDictionary<string, (Type Service, MethodInfo Method, Type DtoType)>.Empty;
+
+    foreach (var service in serviceInfo)
+    {
+        // Check if the key already exists in the dictionary
+        if (!sortedServiceInfo.ContainsKey(service.Key.Name))
+        {
+            // If the key does not exist, add the new element
+            sortedServiceInfo = sortedServiceInfo.Add(service.Key.Name, service.Value);
+        }
+        else
+        {
+            // FIXME: add logging
+            // If the key exists, decide whether to update the existing value or ignore the new one
+            // To update the existing value, uncomment the following line:
+            // sortedServiceInfo = sortedServiceInfo.SetItem(service.Key.Name, service.Value);
+        }
+    }
+    
         var swaggerDoc = new OpenApiDocument();
         swaggerDoc.Info = new OpenApiInfo()
         {
-            Title = "TownSuite.SSV3Adapter",
-            Version = "v1"
+            Title = _title,
+            Version = _version,
+            Description = _description
         };
         swaggerDoc.Components = new OpenApiComponents();
         swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>();
@@ -299,7 +321,7 @@ internal class Swagger
             return new OpenApiSchema { Type = "string" };
         }
 
-        if (type == typeof(int))
+        if (type == typeof(int) || type == typeof(long) || type == typeof(short) || type == typeof(byte))
         {
             return new OpenApiSchema { Type = "integer" };
         }
@@ -319,6 +341,18 @@ internal class Swagger
             return new OpenApiSchema { Type = "number" };
         }
 
+        if(type ==typeof(int[])) return new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "integer" } };
+        if(type ==typeof(string[])) return new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "string" } };
+        if(type ==typeof(decimal[])) return new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "number" } };
+        if(type ==typeof(double[])) return new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "number" } };
+        if(type ==typeof(float[])) return new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "number" } };
+        if(type ==typeof(DateTime[])) return new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "string" } };
+        if(type ==typeof(bool[])) return new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "boolean" } };
+        if(type == typeof(byte[])) return new OpenApiSchema { Type = "string", Format = "byte" };
+        if (type == typeof(System.Guid)) return new OpenApiSchema { Type = "string", Format = "uuid" };
+        if (type == typeof(System.DateTimeOffset)) return new OpenApiSchema { Type = "string", Format = "date-time" };
+        if(type == typeof(System.Char)) return new OpenApiSchema { Type = "string", Format = "char" };
+        
         return GetCustomObjectOpenApiSchema(type, level, processedTypes, swaggerDoc);
     }
 
@@ -326,7 +360,146 @@ internal class Swagger
         OpenApiDocument swaggerDoc)
     {
         if (type == typeof(System.Object)) return null;
+        
+        
+        // If the type is a TimeZoneInfo
+        if (type == typeof(TimeZoneInfo))
+        {
+            return new OpenApiSchema
+            {
+                Type = "string"
+            };
+        }
+        
+        // If the type is a TimeSpan
+        if (type == typeof(TimeSpan))
+        {
+            return new OpenApiSchema
+            {
+                Type = "string",
+                Format = "duration"
+            };
+        }
+        
+        // If the type is a Nullable<T>
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            // Get the underlying type of the nullable type
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            // Return the OpenAPI schema of the underlying type
+            return GetOpenApiSchema(underlyingType, level + 1, processedTypes, swaggerDoc);
+        }
+        
+        // If the type is a KeyValuePair
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
+        {
+            var keyValuePairSchema = new OpenApiSchema
+            {
+                Type = "object",
+                Properties = new SortedDictionary<string, OpenApiSchema>()
+            };
 
+            var keyType = type.GetGenericArguments()[0];
+            var valueType = type.GetGenericArguments()[1];
+
+            var keySchema = GetOpenApiSchema(keyType, level + 1, processedTypes, swaggerDoc);
+            if (keySchema != null)
+            {
+                keyValuePairSchema.Properties.Add("Key", keySchema);
+            }
+
+            var valueSchema = GetOpenApiSchema(valueType, level + 1, processedTypes, swaggerDoc);
+            if (valueSchema != null)
+            {
+                keyValuePairSchema.Properties.Add("Value", valueSchema);
+            }
+
+            return keyValuePairSchema;
+        }
+        
+        // If the type is a Tuple
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Tuple<>))
+        {
+            var tupleSchema = new OpenApiSchema
+            {
+                Type = "object",
+                Properties = new SortedDictionary<string, OpenApiSchema>()
+            };
+
+            var tupleArguments = type.GetGenericArguments();
+            for (int i = 0; i < tupleArguments.Length; i++)
+            {
+                var s = GetOpenApiSchema(tupleArguments[i], level + 1, processedTypes, swaggerDoc);
+                if (s != null)
+                {
+                    tupleSchema.Properties.Add($"Item{i + 1}", s);
+                }
+            }
+
+            return tupleSchema;
+        }
+        
+        // If the type is a Tuple<T1, T2>
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Tuple<,>))
+        {
+            var tupleSchema = new OpenApiSchema
+            {
+                Type = "object",
+                Properties = new SortedDictionary<string, OpenApiSchema>()
+            };
+
+            var tupleArguments = type.GetGenericArguments();
+            for (int i = 0; i < tupleArguments.Length; i++)
+            {
+                var s = GetOpenApiSchema(tupleArguments[i], level + 1, processedTypes, swaggerDoc);
+                if (s != null)
+                {
+                    tupleSchema.Properties.Add($"Item{i + 1}", s);
+                }
+            }
+
+            return tupleSchema;
+        }
+        
+        // If the type is an array of DayOfWeek
+        if (type.IsArray && type.GetElementType() == typeof(DayOfWeek))
+        {
+            return new OpenApiSchema
+            {
+                Type = "array",
+                Items = new OpenApiSchema
+                {
+                    Type = "string",
+                    Enum = Enum.GetNames(typeof(DayOfWeek)).Select(name => new OpenApiString(name)).ToList<IOpenApiAny>()
+                }
+            };
+        }
+        
+        
+        // If the type is a List
+        if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(List<>) 
+                                   || type.GetGenericTypeDefinition() == typeof(IEnumerable<>) 
+                                   || type.GetGenericTypeDefinition() == typeof(IList<>)
+                                   || type.GetGenericTypeDefinition() == typeof(ICollection<>)
+                                   ))
+        {
+            return new OpenApiSchema
+            {
+                Type = "array",
+                Items = GetOpenApiSchema(type.GetGenericArguments()[0], level + 1, processedTypes, swaggerDoc)
+            };
+        }
+
+        // If the type is a Dictionary or IDictionary
+        if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Dictionary<,>) || type.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+        {
+            return new OpenApiSchema
+            {
+                Type = "object",
+                AdditionalProperties = GetOpenApiSchema(type.GetGenericArguments()[1], level + 1, processedTypes, swaggerDoc)
+            };
+        }
+        
         // If the type is a custom object
         var schema = new OpenApiSchema
         {
@@ -335,7 +508,7 @@ internal class Swagger
             Reference = new OpenApiReference()
             {
                 Id = $"{type.Namespace}.{type.Name}",
-                Type = ReferenceType.Schema
+                Type = ReferenceType.Schema,
             }
         };
 

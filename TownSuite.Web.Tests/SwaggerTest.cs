@@ -13,7 +13,7 @@ public class SwaggerTest
         var serviceProvider = Settings.GetServiceProvider();
 
         var swag = new Swagger(options, serviceProvider,
-            "description", "title", "1.1.1");
+            "description", "title", "v1");
         var results = await swag.Generate("localhost");
         
         Assert.That(results.json,
@@ -21,7 +21,8 @@ public class SwaggerTest
                 @"{
   ""openapi"": ""3.0.1"",
   ""info"": {
-    ""title"": ""TownSuite.SSV3Adapter"",
+    ""title"": ""title"",
+    ""description"": ""description"",
     ""version"": ""v1""
   },
   ""paths"": {
