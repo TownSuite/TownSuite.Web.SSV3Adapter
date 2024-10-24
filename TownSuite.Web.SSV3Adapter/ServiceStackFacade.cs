@@ -31,37 +31,50 @@ internal class ServiceStackAdapter
         string value,
         string method)
     {
-        // TODO: make sure when calling have the front end code include the full namespace of the dto
-        // For example call https://localhost/ss/index/Some.Namespace.And.Type
-
-        var name = path.Split('/').LastOrDefault() ?? "";
-
-        if (string.Equals(name, "")) return (400, "Service not specified");
-        // magic routing based on the name starts here
-
-
-        var serviceInfo = _ssHelper.GetService(name);
-
-        if (!serviceInfo.HasValue)
+        try
         {
-            _prom?.ExceptionTriggered();
-            return (404, "Service Not found");
-        }
+            // TODO: make sure when calling have the front end code include the full namespace of the dto
+            // For example call https://localhost/ss/index/Some.Namespace.And.Type
 
-        if (serviceInfo.Value.Method == null || serviceInfo.HasValue == false)
+            var name = path.Split('/').LastOrDefault() ?? "";
+
+            if (string.Equals(name, "")) return (400, "Service not specified");
+            // magic routing based on the name starts here
+
+
+            var serviceInfo = _ssHelper.GetService(name);
+
+            if (!serviceInfo.HasValue)
+            {
+                _prom?.ExceptionTriggered();
+                return (404, "Service Not found");
+            }
+
+            if (serviceInfo.Value.Method == null || serviceInfo.HasValue == false)
+            {
+                _prom?.ExceptionTriggered();
+                return (404, "Method not found");
+            }
+
+            var request = JsonConvert.DeserializeObject(value ?? "", serviceInfo.Value.DtoType,
+                _options.SerializerSettings);
+
+            var results = await CreateAndInvokeService(serviceInfo.Value, request);
+            _prom?.EndRequest(results.statusCode.ToString(),
+                method,
+                name, serviceInfo.Value.Method.Name);
+            return results;
+        }
+        catch (Exception ex)
         {
-            _prom?.ExceptionTriggered();
-            return (404, "Method not found");
+            if (_options.OtherExceptionCallback != null)
+            {
+                var returnValues = _options.OtherExceptionCallback(ex);
+                if (returnValues != null)
+                    return returnValues.Value;
+            }
+            throw;
         }
-
-        var request = JsonConvert.DeserializeObject(value ?? "", serviceInfo.Value.DtoType,
-            _options.SerializerSettings);
-
-        var results = await CreateAndInvokeService(serviceInfo.Value, request);
-        _prom?.EndRequest(results.statusCode.ToString(),
-            method,
-            name, serviceInfo.Value.Method.Name);
-        return results;
     }
 
     private async Task<(int statusCode, string? json)> CreateAndInvokeService((Type Service, MethodInfo Method,

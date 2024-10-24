@@ -20,8 +20,13 @@
     </ItemGroup>
     
     <ItemGroup>
-        <None Remove="ServiceStackExample\"/>
-        <None Remove="Newtonsoft.Json"/>
-        <None Remove="prometheus-net.AspNetCore"/>
+        <None Remove="ServiceStackExample\" />
+        <None Remove="Newtonsoft.Json" />
+        <None Remove="prometheus-net.AspNetCore" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\TownSuite.Web.SSV3Adapter.Prometheus\TownSuite.Web.SSV3Adapter.Prometheus.csproj" />
+      <ProjectReference Include="..\TownSuite.Web.SSV3Adapter\TownSuite.Web.SSV3Adapter.csproj" />
     </ItemGroup>
 </Project>
