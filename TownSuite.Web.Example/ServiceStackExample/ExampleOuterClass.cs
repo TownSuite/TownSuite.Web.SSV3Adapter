@@ -4,6 +4,5 @@ public class ExampleOuterClass
 {
     public class ExampleInnerClass
     {
-
     }
 }
