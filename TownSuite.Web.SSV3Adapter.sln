@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1700.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TownSuite.Web.Example", "TownSuite.Web.Example\TownSuite.Web.Example.csproj", "{A33E5A1A-71D2-4A83-BB02-F66A49F9E25E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TownSuite.Web.Example", "TownSuite.Web.Example\TownSuite.Web.Example.csproj", "{A33E5A1A-71D2-4A83-BB02-F66A49F9E25E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TownSuite.Web.SSV3Adapter", "TownSuite.Web.SSV3Adapter\TownSuite.Web.SSV3Adapter.csproj", "{3DCE0436-BC70-4C38-B231-7EBA346D56E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TownSuite.Web.SSV3Adapter", "TownSuite.Web.SSV3Adapter\TownSuite.Web.SSV3Adapter.csproj", "{3DCE0436-BC70-4C38-B231-7EBA346D56E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TownSuite.Web.Tests", "TownSuite.Web.Tests\TownSuite.Web.Tests.csproj", "{85279128-0C3F-4A01-9A73-24BB3F175FE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TownSuite.Web.Tests", "TownSuite.Web.Tests\TownSuite.Web.Tests.csproj", "{85279128-0C3F-4A01-9A73-24BB3F175FE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TownSuite.Web.SSV3Adapter.Interfaces", "TownSuite.Web.SSV3Adapter.Interfaces\TownSuite.Web.SSV3Adapter.Interfaces.csproj", "{F0ED9727-A5A6-4C2A-BBCD-ED439027F9CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TownSuite.Web.SSV3Adapter.Interfaces", "TownSuite.Web.SSV3Adapter.Interfaces\TownSuite.Web.SSV3Adapter.Interfaces.csproj", "{F0ED9727-A5A6-4C2A-BBCD-ED439027F9CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TownSuite.Web.SSV3Adapter.Prometheus", "TownSuite.Web.SSV3Adapter.Prometheus\TownSuite.Web.SSV3Adapter.Prometheus.csproj", "{2FA3C0F6-6FA9-4E05-9DEB-778A3D0421D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TownSuite.Web.SSV3Adapter.Prometheus", "TownSuite.Web.SSV3Adapter.Prometheus\TownSuite.Web.SSV3Adapter.Prometheus.csproj", "{2FA3C0F6-6FA9-4E05-9DEB-778A3D0421D6}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{67840C38-0B89-4047-91B4-20843974EF26}"
 EndProject

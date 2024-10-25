@@ -189,7 +189,9 @@ internal class SsHelper
             var parameters = mi.GetParameters();
             if (parameters.Length != 1) continue;
 
-            if (parameters.FirstOrDefault().ParameterType.ToString()?.Split('.').LastOrDefault() == requestName ||
+            var parameterString = parameters.FirstOrDefault().ParameterType.ToString();
+            var individualParameter = parameterString?.Split('.').LastOrDefault();
+            if (individualParameter == requestName ||
                 string.IsNullOrWhiteSpace(requestName))
             {
                 method = mi;
@@ -249,7 +251,6 @@ internal class SsHelper
             var paramType = mi.GetParameters()[0].ParameterType;
             if (paramType.IsValueType || paramType == typeof(string))
                 continue;
-
 
             var actionName = mi.Name.ToUpper();
             if (actionName != "ANY" && actionName != "ANYASYNC" &&
