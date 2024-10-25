@@ -41,5 +41,5 @@ public class ServiceStackV3AdapterOptions
         object? requestDto), Task> CustomCallBack { get; set; }
 
     public Func<ISSV3Prometheus>? Prometheus { get; set; } = null;
-    public Func<Exception, (int statusCode, string? json)?> OtherExceptionCallback { get; internal set; }
+    public Func<Exception, ValueTask<(int statusCode, string? json)?>> OtherExceptionCallback { get; set; }
 }

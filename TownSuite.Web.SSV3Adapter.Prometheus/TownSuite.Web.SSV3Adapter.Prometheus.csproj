@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
@@ -12,9 +12,9 @@
         <Copyright>TownSuite Muncipal Software Inc. 2021</Copyright>
         <Deterministic>true</Deterministic>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>1.0.21</Version>
-        <AssemblyVersion>1.0.21</AssemblyVersion>
-        <FileVersion>1.0.21</FileVersion>
+        <Version>1.0.22</Version>
+        <AssemblyVersion>1.0.22</AssemblyVersion>
+        <FileVersion>1.0.22</FileVersion>
 
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
