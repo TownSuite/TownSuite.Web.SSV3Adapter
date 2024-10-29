@@ -40,7 +40,7 @@ function nuget_restore()
 function build()
 {
 	Write-Host "build TownSuite.Web.SSV3Adapter.sln" -ForegroundColor Green
-	& dotnet build -c Release
+	& dotnet build -c Release TownSuite.Web.SSV3Adapter.sln
 	if ($LastExitCode -ne 0) { throw "Building solution, TownSuite.Web.SSV3Adapter.sln, failed" }
 }
 
