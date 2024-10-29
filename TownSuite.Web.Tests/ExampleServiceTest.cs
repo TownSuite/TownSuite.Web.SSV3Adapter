@@ -16,7 +16,6 @@ public class ExampleServiceTest
 
         var value = "";
 
-
         var adapter = new ServiceStackAdapter(options, serviceProvider);
         var results = await adapter.Post(path, value, "any");
 
@@ -56,7 +55,7 @@ public class ExampleServiceTest
             ex =>
             {
                 exceptionMessage = ex.Message;
-                return (418, null);
+                return new ValueTask<(int, string?)?>((418, null));
             };
         var adapter = new ServiceStackAdapter(options, serviceProvider);
         var results = await adapter.Post(path, value, "any");

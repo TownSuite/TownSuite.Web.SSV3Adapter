@@ -123,7 +123,6 @@ app.UseServiceStackV3Adapter(new ServiceStackV3AdapterOptions(
                 // other custom work that needs to take place before service methods are called
             }
 
-
             // Example of executing an extra method regardless based solely on serviceInstance type
             if (args.serviceInstance.GetType() == typeof(ExampleService))
             {

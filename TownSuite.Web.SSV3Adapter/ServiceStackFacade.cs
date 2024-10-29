@@ -69,7 +69,7 @@ internal class ServiceStackAdapter
         {
             if (_options.OtherExceptionCallback != null)
             {
-                var returnValues = _options.OtherExceptionCallback(ex);
+                var returnValues = await _options.OtherExceptionCallback(ex);
                 if (returnValues != null)
                     return returnValues.Value;
             }
