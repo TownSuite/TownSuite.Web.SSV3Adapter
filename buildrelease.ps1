@@ -34,7 +34,6 @@ function clean_build()
 
 function nuget_restore()
 {
-	AddInternalNugetSource
 	nuget restore "TownSuite.Web.SSV3Adapter.sln" -NonInteractive
 }
 
