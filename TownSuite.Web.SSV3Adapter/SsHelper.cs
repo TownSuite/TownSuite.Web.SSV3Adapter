@@ -33,7 +33,10 @@ internal class SsHelper
         // use constructor with most parameters
         var ctors = theService.GetConstructors();
         // assuming class A has only one constructor
-        var ctor = ctors.OrderByDescending(p => p.GetParameters().Count()).FirstOrDefault();
+        var ctor = ctors
+            .Where(ConstructorAvailable)
+            .OrderByDescending(p => p.GetParameters().Count())
+            .FirstOrDefault();
 
         if (ctor.GetParameters().Count() == 0)
         {
@@ -97,7 +100,7 @@ internal class SsHelper
         if (SwaggerServiceMap.Any()) return SwaggerServiceMap;
 
         var types = PermissiveLoadAssemblies();
-        
+
         var typeInfo = types.Where(p => IsServiceType(p)).OrderBy(p => p.Name);
         foreach (var service in typeInfo)
         {
@@ -212,13 +215,23 @@ internal class SsHelper
 
         var ctors = secureAttType.GetConstructors();
         // assuming class A has only one constructor
-        var ctor = ctors.OrderByDescending(p => p.GetParameters().Count()).FirstOrDefault();
+        var ctor = ctors
+            .Where(ConstructorAvailable)
+            .OrderByDescending(p => p.GetParameters().Count())
+            .FirstOrDefault();
 
         var ctorParameters = await InitalizeParameters(ctor);
 
         var instance = ctor.Invoke(ctorParameters.ToArray());
         SetNewObjectsProperties(attribute, instance, secureAttType);
         return (T)instance;
+    }
+
+    private static bool ConstructorAvailable(ConstructorInfo constructor)
+    {
+        var hasIgnoreAttribute = constructor?.GetCustomAttributes()
+            ?.Any(p => p.GetType().GetInterfaces().Contains(typeof(IIgnoreConstructorAttribute)));
+        return !hasIgnoreAttribute.HasValue || !hasIgnoreAttribute.Value;
     }
 
     private static void SetNewObjectsProperties(object? existingObject, object newObject, Type type)
@@ -241,7 +254,10 @@ internal class SsHelper
 
         var ctors = secureAttType.GetConstructors();
         // assuming class A has only one constructor
-        var ctor = ctors.OrderByDescending(p => p.GetParameters().Count()).FirstOrDefault();
+        var ctor = ctors
+            .Where(ConstructorAvailable)
+            .OrderByDescending(p => p.GetParameters().Count())
+            .FirstOrDefault();
 
         var ctorParameters = await InitalizeParameters(ctor);
 
