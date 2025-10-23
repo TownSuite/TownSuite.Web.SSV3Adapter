@@ -223,7 +223,7 @@ internal class SsHelper
         var ctorParameters = await InitalizeParameters(ctor);
 
         var instance = ctor.Invoke(ctorParameters.ToArray());
-        SetNewObjectsProperties(attribute, instance, secureAttType);
+        SetNewObjectsProperties(attribute!, instance, secureAttType);
         return (T)instance;
     }
 
@@ -234,7 +234,7 @@ internal class SsHelper
         return !hasIgnoreAttribute.HasValue || !hasIgnoreAttribute.Value;
     }
 
-    private static void SetNewObjectsProperties(object? existingObject, object newObject, Type type)
+    private static void SetNewObjectsProperties(object existingObject, object newObject, Type type)
     {
         var properties = type.GetProperties()
                     .Where(props => props.CanRead && props.CanWrite);
