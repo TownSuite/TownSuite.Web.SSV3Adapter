@@ -237,7 +237,8 @@ internal class SsHelper
     private static void SetNewObjectsProperties(object existingObject, object newObject, Type type)
     {
         var properties = type.GetProperties()
-                    .Where(props => props.CanRead && props.CanWrite);
+                    .Where(props => props.CanRead && props.CanWrite 
+                    && props.GetGetMethod(false) != null && props.GetSetMethod(false) != null);
         foreach (var prop in properties)
         {
             prop.SetValue(newObject, prop.GetValue(existingObject));

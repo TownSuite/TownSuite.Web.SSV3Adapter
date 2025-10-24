@@ -7,6 +7,7 @@ public class ExampleAttribute : Attribute, IExecutableAttribute
 {
     private readonly IHttpContextAccessor? _httpContextAccessor;
     public string[]? ExampleProperty { get; set; }
+    public bool ExampleNonCarryingValue { get; private set; }
 
     public ExampleAttribute()
     {
@@ -16,6 +17,7 @@ public class ExampleAttribute : Attribute, IExecutableAttribute
     public ExampleAttribute(params string[] exampleProperty)
     {
         ExampleProperty = exampleProperty;
+        ExampleNonCarryingValue = true;
     }
 
     public ExampleAttribute(IHttpContextAccessor httpContextAccessor)
