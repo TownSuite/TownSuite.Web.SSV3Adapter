@@ -5,7 +5,7 @@ namespace TownSuite.Web.Example.ServiceStackExample;
 
 public class ExampleAttribute : Attribute, IExecutableAttribute
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor? _httpContextAccessor;
 
     public ExampleAttribute()
     {

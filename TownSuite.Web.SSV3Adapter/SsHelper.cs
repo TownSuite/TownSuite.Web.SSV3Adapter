@@ -33,7 +33,10 @@ internal class SsHelper
         // use constructor with most parameters
         var ctors = theService.GetConstructors();
         // assuming class A has only one constructor
-        var ctor = ctors.OrderByDescending(p => p.GetParameters().Count()).FirstOrDefault();
+        var ctor = ctors
+            .Where(ConstructorAvailable)
+            .OrderByDescending(p => p.GetParameters().Count())
+            .FirstOrDefault();
 
         if (ctor.GetParameters().Count() == 0)
         {
@@ -42,23 +45,24 @@ internal class SsHelper
             return instance;
         }
 
-        var ctorParameters = new List<object>();
-        await InitalizeParameters(ctor, ctorParameters);
+        var ctorParameters = await InitalizeParameters(ctor);
         instance = ctor.Invoke(ctorParameters.ToArray());
         return instance;
     }
 
-    private async Task InitalizeParameters(ConstructorInfo? ctor, List<object> ctorParameters)
+    private async Task<List<object>> InitalizeParameters(ConstructorInfo? ctor)
     {
+        var ctorParameters = new List<object>();
         foreach (var param in ctor.GetParameters())
         {
-            var parameter = _serviceProvider.GetService(param.ParameterType);
-            if (parameter == null) throw new NotImplementedException($"{param.ParameterType} not found");
+            var parameter = _serviceProvider.GetService(param.ParameterType) 
+                ?? throw new NotImplementedException($"{param.ParameterType} not found");
 
             if (_options.CustomCallBack != null) await _options.CustomCallBack((CustomCall.Parameter, parameter, null));
 
             ctorParameters.Add(parameter);
         }
+        return ctorParameters;
     }
 
     public (Type Service, MethodInfo Method, Type DtoType)?
@@ -96,7 +100,7 @@ internal class SsHelper
         if (SwaggerServiceMap.Any()) return SwaggerServiceMap;
 
         var types = PermissiveLoadAssemblies();
-        
+
         var typeInfo = types.Where(p => IsServiceType(p)).OrderBy(p => p.Name);
         foreach (var service in typeInfo)
         {
@@ -204,22 +208,42 @@ internal class SsHelper
 
     public async Task<T?> GetAttributeAsync<T>(Type service)
     {
-        var secureAttType = Attribute.GetCustomAttributes(
-            service)?.Where(p => p.GetType().GetInterfaces().Contains(typeof(T)))?.FirstOrDefault()?.GetType();
+        var attribute = Attribute.GetCustomAttributes(
+            service)?.Where(p => p.GetType().GetInterfaces().Contains(typeof(T)))?.FirstOrDefault();
+        var secureAttType = attribute?.GetType();
         if (secureAttType == null) return default;
 
         var ctors = secureAttType.GetConstructors();
         // assuming class A has only one constructor
-        var ctor = ctors.OrderByDescending(p => p.GetParameters().Count()).FirstOrDefault();
+        var ctor = ctors
+            .Where(ConstructorAvailable)
+            .OrderByDescending(p => p.GetParameters().Count())
+            .FirstOrDefault();
 
-
-        var ctorParameters = new List<object>();
-        await InitalizeParameters(ctor, ctorParameters);
+        var ctorParameters = await InitalizeParameters(ctor);
 
         var instance = ctor.Invoke(ctorParameters.ToArray());
+        SetNewObjectsProperties(attribute!, instance, secureAttType);
         return (T)instance;
     }
 
+    private static bool ConstructorAvailable(ConstructorInfo constructor)
+    {
+        var hasIgnoreAttribute = constructor?.GetCustomAttributes()
+            ?.Any(p => p.GetType().GetInterfaces().Contains(typeof(IIgnoreConstructorAttribute)));
+        return !hasIgnoreAttribute.HasValue || !hasIgnoreAttribute.Value;
+    }
+
+    private static void SetNewObjectsProperties(object existingObject, object newObject, Type type)
+    {
+        var properties = type.GetProperties()
+                    .Where(props => props.CanRead && props.CanWrite 
+                    && props.GetGetMethod(false) != null && props.GetSetMethod(false) != null);
+        foreach (var prop in properties)
+        {
+            prop.SetValue(newObject, prop.GetValue(existingObject));
+        }
+    }
 
     public async Task<IExecutableAttribute> GetDescriptionAttributeAsync(Type service, object dto)
     {
@@ -231,11 +255,12 @@ internal class SsHelper
 
         var ctors = secureAttType.GetConstructors();
         // assuming class A has only one constructor
-        var ctor = ctors.OrderByDescending(p => p.GetParameters().Count()).FirstOrDefault();
+        var ctor = ctors
+            .Where(ConstructorAvailable)
+            .OrderByDescending(p => p.GetParameters().Count())
+            .FirstOrDefault();
 
-
-        var ctorParameters = new List<object>();
-        await InitalizeParameters(ctor, ctorParameters);
+        var ctorParameters = await InitalizeParameters(ctor);
 
         var instance = ctor.Invoke(ctorParameters.ToArray());
         return (IExecutableAttribute)instance;
