@@ -1,6 +1,6 @@
 ﻿namespace TownSuite.Web.Example.ServiceStackExample;
 
-[ExampleAttribute("TEST")]
+[ExampleAttribute]
 public class Example2Service : BaseServiceExample
 {
     public async Task<Example2Response> Any(Example2 request)
