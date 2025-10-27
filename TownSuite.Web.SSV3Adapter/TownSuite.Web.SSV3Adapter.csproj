@@ -1,29 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-
-
         <AssemblyTitle>TownSuite.Web.SSV3Adapter</AssemblyTitle>
         <Company>TownSuite Municipal Software Inc.</Company>
         <Product>SSV3 Adapter Middleware</Product>
-        <Description>Helper route middleware to fake service stack version 3.
-            This is to help port .net framework service stack 3 code to
-            net6.0 and asp.net core web api.
-        </Description>
-        <Copyright>TownSuite Muncipal Software Inc. 2021</Copyright>
-        <Deterministic>true</Deterministic>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>1.0.23</Version>
-        <AssemblyVersion>1.0.23</AssemblyVersion>
-        <FileVersion>1.0.23</FileVersion>
-
         <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
-
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     </ItemGroup>

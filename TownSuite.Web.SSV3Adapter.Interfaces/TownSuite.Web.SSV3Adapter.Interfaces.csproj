@@ -1,21 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-
         <AssemblyTitle>TownSuite.Web.SSV3Adapter.Interfaces</AssemblyTitle>
-        <Company>TownSuite Municipal Software Inc.</Company>
-        <Product>SSV3 Adapter Interfaces</Product>
-        <Description>Interfaces required to work with the SSV3Adapter project</Description>
-        <Copyright>TownSuite Muncipal Software Inc. 2021</Copyright>
-        <Deterministic>true</Deterministic>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>1.0.23</Version>
-        <AssemblyVersion>1.0.23</AssemblyVersion>
-        <FileVersion>1.0.23</FileVersion>
-
         <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <RootNamespace>TownSuite.Web.SSV3Adapter.Interfaces</RootNamespace>

@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+      <AssemblyVersion>1.0.24</AssemblyVersion>
+      <FileVersion>1.0.24</FileVersion>
+      <Version>1.0.24</Version>
+      <Deterministic>true</Deterministic>
+      <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+      <Company>TownSuite Municipal Software Inc.</Company>
+      <Product>SSV3 Adapter Middleware</Product>
+      <Copyright>Copyright © TownSuite Municipal Software Inc. 2025</Copyright>
+      <Description>Helper route middleware to fake service stack version 3.
+          This is to help port .net framework service stack 3 code to
+          net6.0 and newer asp.net core web api.
+      </Description>
+  </PropertyGroup>
+</Project>
