@@ -75,6 +75,55 @@ public class SwaggerTest
         }
       }
     },
+    ""/service/json/syncreply/{name}/ExampleAttributeProperty"": {
+      ""post"": {
+        ""requestBody"": {
+          ""content"": {
+            ""application/json"": {
+              ""schema"": {
+                ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ExampleAttributeProperty""
+              }
+            }
+          }
+        },
+        ""responses"": {
+          ""200"": {
+            ""description"": ""Success"",
+            ""content"": {
+              ""application/json"": {
+                ""schema"": {
+                  ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ExampleAttributePropertyResponse""
+                }
+              }
+            }
+          },
+          ""299"": {
+            ""description"": ""Partial Success""
+          },
+          ""400"": {
+            ""description"": ""Bad Request""
+          },
+          ""401"": {
+            ""description"": ""Unauthorized""
+          },
+          ""403"": {
+            ""description"": ""Forbidden""
+          },
+          ""429"": {
+            ""description"": ""Too Many Requests""
+          },
+          ""500"": {
+            ""description"": ""Internal Server Error""
+          },
+          ""502"": {
+            ""description"": ""Bad Gateway""
+          },
+          ""504"": {
+            ""description"": ""Gateway Timeout""
+          }
+        }
+      }
+    },
     ""/service/json/syncreply/{name}/ExampleDataProfiling"": {
       ""post"": {
         ""requestBody"": {
@@ -93,6 +142,55 @@ public class SwaggerTest
               ""application/json"": {
                 ""schema"": {
                   ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ExampleDataProfilingResponse""
+                }
+              }
+            }
+          },
+          ""299"": {
+            ""description"": ""Partial Success""
+          },
+          ""400"": {
+            ""description"": ""Bad Request""
+          },
+          ""401"": {
+            ""description"": ""Unauthorized""
+          },
+          ""403"": {
+            ""description"": ""Forbidden""
+          },
+          ""429"": {
+            ""description"": ""Too Many Requests""
+          },
+          ""500"": {
+            ""description"": ""Internal Server Error""
+          },
+          ""502"": {
+            ""description"": ""Bad Gateway""
+          },
+          ""504"": {
+            ""description"": ""Gateway Timeout""
+          }
+        }
+      }
+    },
+    ""/service/json/syncreply/{name}/ExampleInnerClass"": {
+      ""post"": {
+        ""requestBody"": {
+          ""content"": {
+            ""application/json"": {
+              ""schema"": {
+                ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ExampleInnerClass""
+              }
+            }
+          }
+        },
+        ""responses"": {
+          ""200"": {
+            ""description"": ""Success"",
+            ""content"": {
+              ""application/json"": {
+                ""schema"": {
+                  ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ExampleResponse""
                 }
               }
             }
@@ -379,6 +477,23 @@ public class SwaggerTest
           }
         }
       },
+      ""TownSuite.Web.Example.ServiceStackExample.ExampleAttributeProperty"": {
+        ""type"": ""object"",
+        ""properties"": {
+          ""AttributeValue"": {
+            ""type"": ""string""
+          }
+        },
+        ""description"": """"
+      },
+      ""TownSuite.Web.Example.ServiceStackExample.ExampleAttributePropertyResponse"": {
+        ""type"": ""object"",
+        ""properties"": {
+          ""AttributeValue"": {
+            ""type"": ""string""
+          }
+        }
+      },
       ""TownSuite.Web.Example.ServiceStackExample.ExampleDataProfiling"": {
         ""type"": ""object"",
         ""properties"": {
@@ -404,6 +519,10 @@ public class SwaggerTest
             ""$ref"": ""#/components/schemas/TownSuite.Web.Example.ServiceStackExample.ComplexModel""
           }
         }
+      },
+      ""TownSuite.Web.Example.ServiceStackExample.ExampleInnerClass"": {
+        ""type"": ""object"",
+        ""description"": """"
       },
       ""TownSuite.Web.Example.ServiceStackExample.ExampleResponse"": {
         ""type"": ""object"",
@@ -434,7 +553,7 @@ public class SwaggerTest
       }
     }
   }
-}"));
+}"), results.json);
         Assert.That(results.statusCode == 200);
     }
 }
