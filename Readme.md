@@ -1,5 +1,5 @@
 
-TownSuite.Web.SSV3Adapter is a simple middleware implementation to help port old Service Stack version 3 .net 3.5 and 4.8 code to net6.0 and asp.net core.
+TownSuite.Web.SSV3Adapter is a simple middleware implementation to help port old Service Stack version 3 .net 3.5 and 4.8 code to net6.0/8.0/10.0 and asp.net core.
 
 The premise is, existing code that works can be upgraded to a new tech stack with minimal changes while permitting and encourging use of newer technologies as needed.
 
