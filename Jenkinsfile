@@ -12,6 +12,7 @@ pipeline {
     }
     environment {
         AUTOCONFIGURE_NUGET = 'true'
+        AUTOCONFIGURE_DOCKER = 'true'
     }
     stages {
         stage('Start Automation Script') {
